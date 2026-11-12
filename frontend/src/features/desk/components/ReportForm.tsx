@@ -2,21 +2,17 @@ import {
 	Button,
 	Checkbox,
 	Description,
-	FieldError,
-	Input,
-	Label,
 	ListBox,
 	Modal,
 	Radio,
 	RadioGroup,
 	SearchField,
-	TextField,
 } from "@heroui/react";
 import { Check } from "lucide-react";
 import { type ReactNode, useMemo, useState } from "react";
 import { z } from "zod";
 import type { DeskCatalog, PublicPerson } from "#/api/models";
-import { ApiError } from "#/components/ui";
+import { ApiError, DateInput } from "#/components/ui";
 import { useAppForm } from "#/forms";
 import { type I18n, useI18n } from "#/i18n";
 import {
@@ -39,13 +35,13 @@ export interface ReportValues {
 	priority: string;
 	requesterPersonId: number | null;
 	requesterIncognito: boolean;
-	/** `datetime-local` value (the browser's time zone); only on the agent's form. */
+	/** "YYYY-MM-DDTHH:mm" in the browser's time zone; only on the agent's form. */
 	reportedAt: string;
 }
 
-/** A `datetime-local` value for now, to the minute. */
-export function localNow(): string {
-	const d = new Date();
+/** A "YYYY-MM-DDTHH:mm" value (the browser's time) for now, or offsetDays from now, to the minute. */
+export function localNow(offsetDays = 0): string {
+	const d = new Date(Date.now() + offsetDays * 86_400_000);
 	d.setSeconds(0, 0);
 	return new Date(d.getTime() - d.getTimezoneOffset() * 60_000).toISOString().slice(0, 16);
 }
@@ -372,25 +368,23 @@ export function ReportForm({
 				<Step n={num(7)} title={t("Kiedy zgłoszono?", "When was it reported?")}>
 					<form.Field name="reportedAt">
 						{(field) => (
-							<TextField
-								type="datetime-local"
+							<DateInput
+								label={t("Data zgłoszenia", "Report date")}
+								granularity="minute"
 								value={field.state.value}
 								onChange={field.handleChange}
 								onBlur={field.handleBlur}
-								validationBehavior="aria"
-								isInvalid={field.state.meta.isTouched && field.state.meta.errors.length > 0}
+								minValue={localNow(-30)}
+								maxValue={localNow()}
+								errorMessage={
+									field.state.meta.isTouched ? firstMessage(field.state.meta.errors) : undefined
+								}
+								description={t(
+									"Telefon z rana albo mail z zeszłego tygodnia: najwyżej 30 dni wstecz.",
+									"A call this morning or an e-mail last week: up to 30 days back.",
+								)}
 								className="max-w-xs"
-							>
-								<Label>{t("Data zgłoszenia", "Report date")}</Label>
-								<Input max={localNow()} />
-								<Description>
-									{t(
-										"Telefon z rana albo mail z zeszłego tygodnia: najwyżej 30 dni wstecz.",
-										"A call this morning or an e-mail last week: up to 30 days back.",
-									)}
-								</Description>
-								<FieldError>{firstMessage(field.state.meta.errors)}</FieldError>
-							</TextField>
+							/>
 						)}
 					</form.Field>
 				</Step>

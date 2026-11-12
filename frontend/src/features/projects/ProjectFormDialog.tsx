@@ -156,12 +156,8 @@ function FormContent({
 						/>
 					)}
 				</form.AppField>
-				<form.AppField name="startDate">
-					{(f) => <f.FormInput label="Start" type="date" />}
-				</form.AppField>
-				<form.AppField name="dueDate">
-					{(f) => <f.FormInput label="Due" type="date" />}
-				</form.AppField>
+				<form.AppField name="startDate">{(f) => <f.FormDate label="Start" />}</form.AppField>
+				<form.AppField name="dueDate">{(f) => <f.FormDate label="Due" />}</form.AppField>
 				<form.AppField name="budget">
 					{(f) => <f.FormInput label="Budget (PLN)" placeholder="25000" inputMode="decimal" />}
 				</form.AppField>

@@ -1,5 +1,6 @@
 export { ApiError } from "./ApiError";
 export { ConfirmDialog } from "./ConfirmDialog";
+export { DateInput } from "./DateInput";
 export { EmptyState } from "./EmptyState";
 export { FormDialog } from "./FormDialog";
 export { InfoList } from "./InfoList";

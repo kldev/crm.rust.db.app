@@ -76,7 +76,7 @@ function NewTicketDialog({ prefill, onClose }: { prefill: NewTicketPrefill; onCl
 				categoryKey: v.categoryKey,
 				subcategoryKey: v.subcategoryKey,
 				priority: v.priority,
-				// datetime-local is the browser's time; Date turns it into the instant.
+				// The date picker gives the browser's local time; Date turns it into the instant.
 				reportedAt: new Date(v.reportedAt).toISOString(),
 				requesterPersonId: v.requesterPersonId,
 				requesterIncognito: v.requesterIncognito,

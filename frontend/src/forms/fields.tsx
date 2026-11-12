@@ -8,6 +8,7 @@ import {
 	TextArea,
 	TextField,
 } from "@heroui/react";
+import { DateInput } from "#/components/ui/DateInput";
 import { useFieldContext } from "./context";
 
 /** TanStack Form keeps zod issues (or strings); HeroUI shows one message. */
@@ -33,7 +34,7 @@ export function FormInput({
 	inputMode,
 }: {
 	label: string;
-	type?: "text" | "email" | "password" | "date" | "tel";
+	type?: "text" | "email" | "password" | "tel";
 	placeholder?: string;
 	description?: string;
 	autoFocus?: boolean;
@@ -59,6 +60,22 @@ export function FormInput({
 			{description ? <Description>{description}</Description> : null}
 			<FieldError>{message}</FieldError>
 		</TextField>
+	);
+}
+
+/** A date ("YYYY-MM-DD", "" for none) with the HeroUI date picker. */
+export function FormDate({ label, description }: { label: string; description?: string }) {
+	const { field, message } = useFieldState<string>();
+	return (
+		<DateInput
+			fullWidth
+			label={label}
+			value={field.state.value ?? ""}
+			onChange={field.handleChange}
+			onBlur={field.handleBlur}
+			description={description}
+			errorMessage={message}
+		/>
 	);
 }
 

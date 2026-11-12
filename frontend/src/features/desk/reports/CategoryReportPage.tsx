@@ -1,19 +1,11 @@
-import {
-	Card,
-	Input,
-	Label,
-	Skeleton,
-	TextField,
-	ToggleButton,
-	ToggleButtonGroup,
-} from "@heroui/react";
+import { Card, Skeleton, ToggleButton, ToggleButtonGroup } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import { getRouteApi, Link } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
 import { getCategoryReport } from "#/api/endpoints/desk-reports/desk-reports";
 import { deskKeys } from "#/api/query-keys";
 import { PageHeader } from "#/components/layout/AppLayout";
-import { ApiError, SelectFilter } from "#/components/ui";
+import { ApiError, DateInput, SelectFilter } from "#/components/ui";
 import { useI18n } from "#/i18n";
 import { deskCatalogQuery } from "../hooks";
 import { ExportButtons, ReportTableView } from "./ReportTableView";
@@ -71,24 +63,20 @@ export function CategoryReportPage() {
 			/>
 			<Card className="overflow-hidden p-0">
 				<div className="flex flex-col flex-wrap gap-3 border-b border-separator p-4 sm:flex-row sm:items-end">
-					<TextField
-						type="date"
+					<DateInput
+						label={t("Od", "From")}
 						value={params.from}
+						maxValue={params.to}
 						onChange={(v) => v && set({ from: v })}
-						className="w-full sm:w-44"
-					>
-						<Label>{t("Od", "From")}</Label>
-						<Input />
-					</TextField>
-					<TextField
-						type="date"
+						className="w-full sm:w-48"
+					/>
+					<DateInput
+						label={t("Do", "To")}
 						value={params.to}
+						minValue={params.from}
 						onChange={(v) => v && set({ to: v })}
-						className="w-full sm:w-44"
-					>
-						<Label>{t("Do", "To")}</Label>
-						<Input />
-					</TextField>
+						className="w-full sm:w-48"
+					/>
 					{markets.length > 0 ? (
 						<SelectFilter
 							label={t("Rynek", "Market")}
