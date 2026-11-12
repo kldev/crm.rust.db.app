@@ -1,0 +1,56 @@
+== Routines of schema app (calls, total and own time; own time excludes nested routines)
+            routine             | calls | avg_ms | avg_self_ms | total_ms 
+--------------------------------+-------+--------+-------------+----------
+ app.project_search             | 43708 |  3.410 |       3.348 |   149044
+ app.client_search              | 66626 |  0.438 |       0.377 |    29186
+ app.project_get                | 43944 |  0.098 |       0.050 |     4301
+ app.client_update              | 10708 |  0.380 |       0.344 |     4074
+ app.project_change_stage       |  7285 |  0.471 |       0.337 |     3433
+ app.project_stage_history_list | 21118 |  0.147 |       0.099 |     3106
+ app.client_get                 | 50825 |  0.053 |       0.037 |     2691
+ app.project_comment_list       | 16896 |  0.116 |       0.060 |     1956
+ app.project_comment_add        | 10563 |  0.171 |       0.113 |     1803
+ app.project_create             |  5182 |  0.342 |       0.206 |     1772
+ app.client_create              |  8432 |  0.193 |       0.158 |     1624
+ app.team_project_stats         | 10629 |  0.087 |       0.067 |      929
+ app.project_comment_get        | 10563 |  0.049 |       0.024 |      513
+ app.user_ensure_admin          |     1 |  2.988 |       2.988 |        3
+ app.desk_ticket_resolve        |     0 |        |             |        0
+ app.desk_ticket_take           |     0 |        |             |        0
+
+
+== Top 25 statements by total time (inside routines included; blocks per call = shared hit + read)
+                                                   statement                                                    | calls  | avg_ms | max_ms | blocks_per_call | blocks_read | toplevel 
+----------------------------------------------------------------------------------------------------------------+--------+--------+--------+-----------------+-------------+----------
+ SELECT * FROM app.project_search($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)                                 |  43709 |  3.429 | 165.99 |          3885.0 |       88071 | t
+ WITH candidates AS ( (SELECT p.id, p.due_date FROM crm.projects AS p WHERE p.owner_user_id = $1 AND ($2 IS NUL |  38919 |  2.821 | 163.35 |          4294.0 |       86022 | f
+ SELECT * FROM app.client_search($1, $2, $3, $4, $5, $6, $7, $8, $9)                                            |  66627 |  0.455 |  10.96 |           196.0 |       67013 | t
+ SELECT c.id, c.name, c.nip, c.email, c.phone, c.city, c.status, c.assigned_user_id, u.login, c.created_at, c.u |  33936 |  0.238 |  10.67 |           227.0 |       57225 | f
+ SELECT * FROM app.project_get($1, $2)                                                                          |  43944 |  0.106 |   3.45 |            22.0 |         103 | t
+ SELECT c.id, c.name, c.nip, c.email, c.phone, c.city, c.status, c.assigned_user_id, u.login, c.created_at, c.u |  32691 |  0.134 |   7.35 |           155.0 |        9784 | f
+ CALL app.client_update($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)                                           |  10708 |  0.391 |   4.50 |            34.0 |       25203 | t
+ CALL app.project_change_stage($1, $2, $3, $4, $5)                                                              |   7285 |  0.481 |   4.98 |            87.0 |       12087 | t
+ SELECT * FROM app.project_stage_history_list($1, $2)                                                           |  21118 |  0.154 |   5.62 |            15.0 |       19039 | t
+ SELECT * FROM app.client_get($1, $2)                                                                           |  50825 |  0.060 |   3.52 |            10.0 |        2526 | t
+ UPDATE crm.clients AS c SET name = p_name, nip = p_nip, email = p_email, phone = p_phone, city = p_city, statu |  10708 |  0.274 |   4.29 |            25.0 |       25185 | f
+ SELECT * FROM app.project_comment_list($1, $2, $3, $4)                                                         |  16896 |  0.123 |   2.26 |            18.0 |        8041 | t
+ SELECT u.role FROM crm.users u WHERE u.id = p_actor_id AND u.is_active                                         | 306481 |  0.006 |   0.10 |             3.0 |           0 | f
+ CALL app.project_comment_add($1, $2, $3, $4)                                                                   |  10563 |  0.180 |   5.54 |            26.0 |        2798 | t
+ CALL app.project_create($1, $2, $3, $4, $5, $6, $7, $8, $9)                                                    |   5182 |  0.353 |   6.36 |            77.0 |         131 | t
+ CALL app.client_create($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)                                                |   8432 |  0.204 |   1.49 |            30.0 |         171 | t
+ SELECT h.id, h.from_stage, h.to_stage, h.changed_at, h.changed_by, u.login FROM crm.project_stage_history AS h |  21118 |  0.077 |   5.53 |             6.0 |       19037 | f
+ SELECT crm.project_require_visible(p_actor_id, v_actor_role, p_id)                                             |  43944 |  0.032 |   3.40 |             5.0 |         103 | f
+ UPDATE crm.projects AS p SET stage = p_to_stage, stage_changed_at = now(), updated_at = now(), updated_by = p_ |   7285 |  0.170 |   4.55 |            31.0 |        8286 | f
+ NOT EXISTS ( SELECT $1 FROM crm.projects AS p WHERE p.id = $2 AND ($3 IN ($4 /*, ... */) OR p.owner_user_id =  | 110369 |  0.010 |   3.39 |             5.0 |         196 | f
+ SELECT * FROM app.team_project_stats($1, $2)                                                                   |  10629 |  0.097 |   0.69 |            13.0 |           3 | t
+ INSERT INTO crm.clients (name, nip, email, phone, city, status, assigned_user_id, note, created_by, updated_by |   8432 |  0.111 |   1.01 |            27.0 |         171 | f
+ INSERT INTO crm.project_comments (project_id, author_id, body) VALUES (p_project_id, p_actor_id, p_body) RETUR |  10563 |  0.083 |   5.41 |            17.0 |        2768 | f
+ SELECT v.id, v.name, v.stage, v.start_date, v.due_date, v.budget, v.is_overdue, v.stage_changed_at, v.client_i |  43944 |  0.017 |   0.12 |            14.0 |           0 | f
+ SELECT c.id, c.name, c.nip, c.email, c.phone, c.city, c.status, c.assigned_user_id, u.login, c.note, c.created |  50825 |  0.015 |   3.44 |             7.0 |        2526 | f
+
+
+== Cache hit ratio of the run (tables and indexes of schema crm)
+ hit_percent 
+-------------
+       99.87
+

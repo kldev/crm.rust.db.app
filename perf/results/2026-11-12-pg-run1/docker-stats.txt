@@ -1,0 +1,78 @@
+05:08:07
+crm-postgres-1 6.58% 2.249GiB / 30.46GiB
+crm-app-1 0.00% 6.754MiB / 30.46GiB
+05:08:39
+crm-postgres-1 7.12% 2.25GiB / 30.46GiB
+crm-app-1 8.79% 10.16MiB / 30.46GiB
+05:09:11
+crm-postgres-1 14.99% 2.206GiB / 30.46GiB
+crm-app-1 10.40% 16.84MiB / 30.46GiB
+05:09:43
+crm-postgres-1 20.48% 2.217GiB / 30.46GiB
+crm-app-1 7.20% 28.26MiB / 30.46GiB
+05:10:15
+crm-postgres-1 28.59% 2.234GiB / 30.46GiB
+crm-app-1 13.85% 33.41MiB / 30.46GiB
+05:10:47
+crm-postgres-1 36.51% 2.236GiB / 30.46GiB
+crm-app-1 4.18% 36.16MiB / 30.46GiB
+05:11:19
+crm-postgres-1 37.70% 2.256GiB / 30.46GiB
+crm-app-1 3.98% 36.76MiB / 30.46GiB
+05:11:51
+crm-postgres-1 30.04% 2.263GiB / 30.46GiB
+crm-app-1 3.89% 37.18MiB / 30.46GiB
+05:12:23
+crm-postgres-1 31.46% 2.264GiB / 30.46GiB
+crm-app-1 5.86% 35.96MiB / 30.46GiB
+05:12:55
+crm-postgres-1 27.89% 2.267GiB / 30.46GiB
+crm-app-1 3.76% 36.46MiB / 30.46GiB
+05:13:27
+crm-postgres-1 36.46% 2.272GiB / 30.46GiB
+crm-app-1 4.24% 36.57MiB / 30.46GiB
+05:13:59
+crm-postgres-1 39.29% 2.277GiB / 30.46GiB
+crm-app-1 3.83% 36.83MiB / 30.46GiB
+05:14:31
+crm-postgres-1 30.47% 2.282GiB / 30.46GiB
+crm-app-1 4.09% 36.44MiB / 30.46GiB
+05:15:03
+crm-postgres-1 33.54% 2.285GiB / 30.46GiB
+crm-app-1 5.92% 37.1MiB / 30.46GiB
+05:15:35
+crm-postgres-1 31.97% 2.29GiB / 30.46GiB
+crm-app-1 3.95% 36.59MiB / 30.46GiB
+05:16:07
+crm-postgres-1 31.15% 2.295GiB / 30.46GiB
+crm-app-1 4.35% 37.04MiB / 30.46GiB
+05:16:39
+crm-postgres-1 30.97% 2.299GiB / 30.46GiB
+crm-app-1 4.10% 37.07MiB / 30.46GiB
+05:17:11
+crm-postgres-1 25.81% 2.302GiB / 30.46GiB
+crm-app-1 4.38% 37.15MiB / 30.46GiB
+05:17:43
+crm-postgres-1 36.84% 2.303GiB / 30.46GiB
+crm-app-1 5.51% 37.97MiB / 30.46GiB
+05:18:15
+crm-postgres-1 27.24% 2.306GiB / 30.46GiB
+crm-app-1 5.77% 36.78MiB / 30.46GiB
+05:18:47
+crm-postgres-1 32.03% 2.307GiB / 30.46GiB
+crm-app-1 3.85% 38.23MiB / 30.46GiB
+05:19:19
+crm-postgres-1 28.37% 2.308GiB / 30.46GiB
+crm-app-1 4.03% 37.41MiB / 30.46GiB
+05:19:51
+crm-postgres-1 33.19% 2.31GiB / 30.46GiB
+crm-app-1 4.21% 37.55MiB / 30.46GiB
+05:20:23
+crm-postgres-1 38.10% 2.31GiB / 30.46GiB
+crm-app-1 4.14% 37.57MiB / 30.46GiB
+05:20:55
+crm-postgres-1 15.90% 2.312GiB / 30.46GiB
+crm-app-1 4.72% 37.09MiB / 30.46GiB
+05:21:27
+crm-postgres-1 0.24% 2.311GiB / 30.46GiB
+crm-app-1 0.20% 35.7MiB / 30.46GiB

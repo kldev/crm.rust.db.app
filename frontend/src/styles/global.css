@@ -1,0 +1,172 @@
+@import "tailwindcss";
+@import "@heroui/styles";
+@import "@fontsource-variable/inter";
+@import "@fontsource/cormorant-garamond/500.css";
+@import "@fontsource/cormorant-garamond/600.css";
+
+/*
+ * Ambit Obsidian: obsidian and linen, a champagne accent, serif titles (Cormorant Garamond) over Inter.
+ * The palette is the Obsidian theme of ambit.es (frontend/src/styles/themes.css). Its values live under
+ * --obs-* so they never collide with the --color-* names Tailwind and HeroUI define; HeroUI's own variables
+ * (--accent, --surface, ...) are fed from them below. Unlayered on purpose: HeroUI declares its theme in
+ * @layer base, and an unlayered rule wins.
+ */
+:root {
+	--obs-bg: #e9e4da;
+	--obs-surface: #ffffff;
+	--obs-surface-subtle: #f6f3ee;
+	--obs-surface-hover: #f1ede6;
+	--obs-surface-selected: #f3ebdc;
+	--obs-topbar: #e1dbcf;
+
+	--obs-text: #171a21;
+	--obs-text-secondary: #343a46;
+	--obs-text-muted: #585b61;
+
+	--obs-border: #ddd9d1;
+	--obs-border-subtle: #e8e4dc;
+	--obs-border-strong: #c7c1b6;
+
+	--obs-ink: #171a21;
+	--obs-ink-hover: #343a46;
+	--obs-champagne: #c4a574;
+	--obs-champagne-soft: #f3ebdc;
+
+	--obs-success: #506655;
+	--obs-success-soft: #e7ece8;
+	--obs-warning: #7d6127;
+	--obs-warning-soft: #f5eddd;
+	--obs-danger: #8c433e;
+	--obs-danger-soft: #f4e7e6;
+	--obs-info: #4a5d6e;
+	--obs-info-soft: #e7ecf0;
+
+	--obs-field: #faf8f4;
+
+	--obs-sidebar: #171a21;
+	--obs-sidebar-border: #343a46;
+	--obs-sidebar-text: #d9d4ca;
+	--obs-sidebar-text-muted: #8d9097;
+	--obs-sidebar-hover: #262b34;
+	--obs-sidebar-active: #2a2f39;
+
+	/* HeroUI */
+	--background: var(--obs-bg);
+	--foreground: var(--obs-text);
+	--surface: var(--obs-surface);
+	--surface-foreground: var(--obs-text);
+	--surface-secondary: var(--obs-surface-subtle);
+	--surface-secondary-foreground: var(--obs-text);
+	--surface-tertiary: var(--obs-surface-selected);
+	--surface-tertiary-foreground: var(--obs-text);
+	--overlay: var(--obs-surface);
+	--overlay-foreground: var(--obs-text);
+	--muted: var(--obs-text-muted);
+	--default: var(--obs-surface-hover);
+	--default-foreground: var(--obs-text);
+	--default-hover: var(--obs-surface-selected);
+	--accent: var(--obs-ink);
+	--accent-foreground: #ffffff;
+	--accent-hover: var(--obs-ink-hover);
+	--accent-soft: var(--obs-champagne-soft);
+	--accent-soft-foreground: var(--obs-ink);
+	--success: var(--obs-success);
+	--success-foreground: #ffffff;
+	--success-soft: var(--obs-success-soft);
+	--success-soft-foreground: var(--obs-success);
+	--warning: var(--obs-warning);
+	--warning-foreground: #ffffff;
+	--warning-soft: var(--obs-warning-soft);
+	--warning-soft-foreground: var(--obs-warning);
+	--danger: var(--obs-danger);
+	--danger-foreground: #ffffff;
+	--danger-soft: var(--obs-danger-soft);
+	--danger-soft-foreground: var(--obs-danger);
+	--field-background: var(--obs-field);
+	--field-foreground: var(--obs-text);
+	--field-placeholder: var(--obs-text-muted);
+	--field-border: var(--obs-border);
+	--field-border-width: 1px;
+	--field-shadow: none;
+	--border: var(--obs-border);
+	--separator: var(--obs-border-subtle);
+	--focus: var(--obs-champagne);
+	--link: var(--obs-ink);
+	--radius: 8px;
+	--field-radius: 6px;
+	--surface-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+	--overlay-shadow: -4px 0 16px rgba(16, 24, 40, 0.12);
+}
+
+@theme {
+	--font-sans:
+		"Inter Variable", Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+	--font-display: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+	--font-mono:
+		ui-monospace, "SF Mono", "JetBrains Mono", "Cascadia Mono", Menlo, Consolas, monospace;
+
+	/* Obsidian-only colours used by the shell (sidebar, top bar, champagne details). */
+	--color-ink: var(--obs-ink);
+	--color-champagne: var(--obs-champagne);
+	--color-linen: var(--obs-bg);
+	--color-topbar: var(--obs-topbar);
+	--color-info: var(--obs-info);
+	--color-info-soft: var(--obs-info-soft);
+	--color-sidebar: var(--obs-sidebar);
+	--color-sidebar-border: var(--obs-sidebar-border);
+	--color-sidebar-text: var(--obs-sidebar-text);
+	--color-sidebar-muted: var(--obs-sidebar-text-muted);
+	--color-sidebar-hover: var(--obs-sidebar-hover);
+	--color-sidebar-active: var(--obs-sidebar-active);
+}
+
+html,
+body {
+	background: var(--obs-bg);
+	color: var(--obs-text);
+	font-family: var(--font-sans);
+	-webkit-font-smoothing: antialiased;
+}
+
+/* The directory look of Obsidian: table heads in a mono face, uppercase and tracked. */
+.table__column {
+	font-family: var(--font-mono);
+	font-size: 11px;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+}
+
+/* Rows that open a details page. */
+.table__row[data-href],
+.table__row.is-clickable {
+	cursor: pointer;
+}
+
+/* Figures (ids, amounts, dates) line up in tables and cards. */
+.figures {
+	font-family: var(--font-mono);
+	font-variant-numeric: tabular-nums;
+}
+
+/*
+ * Chart colours (ADR-0011), validated with the dataviz palette checks against the light surface: two categorical
+ * slots (reported, resolved), the fixed status set (on time / due soon / late or overdue, always with an icon and a
+ * label), a neutral for "open", and a one-hue sequential ramp for the heatmap. Charts use these roles only.
+ */
+:root {
+	--viz-series-1: #2a78d6;
+	--viz-series-2: #eb6834;
+	--viz-good: #0ca30c;
+	--viz-warning: #fab219;
+	--viz-critical: #d03b3b;
+	--viz-neutral: #a9a69c;
+	--viz-grid: #e6e2da;
+	--viz-seq-0: #f3f1ec;
+	--viz-seq-1: #cde2fb;
+	--viz-seq-2: #9ec5f4;
+	--viz-seq-3: #6da7ec;
+	--viz-seq-4: #3987e5;
+	--viz-seq-5: #256abf;
+	--viz-seq-6: #184f95;
+	--viz-seq-7: #0d366b;
+}

@@ -1,0 +1,20 @@
+# Agent task files - never published
+.instructions/
+
+# Rust build
+server/target/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+out/
+
+# Local secrets
+infrastructure/.env
+
+# k6 raw outputs that are too large to commit (summaries in perf/results are committed)
+perf/results/**/raw-*.json
+
+# Built React app, copied by frontend/build-to-resources.sh (source: frontend/)
+server/static/

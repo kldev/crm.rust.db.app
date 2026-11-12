@@ -1,0 +1,216 @@
+# Local stack: PostgreSQL 18 -> db-init (roles, database) -> migrate (db/migration) -> app,
+# RustFS (S3) -> rustfs-init (bucket) -> app (desk attachments, ADR-0009).
+# Opt-in profiles: `seed` (test data, millions of rows), `perf` (k6).
+# Values come from .env (copy .env-sample). Start with ./start.sh.
+name: crm
+
+x-app-env: &app-env
+  CRM_DB_HOST: postgres
+  CRM_DB_PORT: "5432"
+  CRM_DB_NAME: ${CRM_DB_NAME:-crm}
+  CRM_DB_APP_USER: ${CRM_DB_APP_USER:-crm_app}
+  CRM_DB_APP_PASSWORD: ${CRM_DB_APP_PASSWORD:?set CRM_DB_APP_PASSWORD in .env}
+  CRM_DB_MIGRATOR_USER: ${CRM_DB_MIGRATOR_USER:-crm_migrator}
+  CRM_DB_MIGRATOR_PASSWORD: ${CRM_DB_MIGRATOR_PASSWORD:?set CRM_DB_MIGRATOR_PASSWORD in .env}
+  CRM_S3_ENDPOINT: http://rustfs:9000
+  CRM_S3_ACCESS_KEY: ${CRM_S3_ACCESS_KEY:?set CRM_S3_ACCESS_KEY in .env}
+  CRM_S3_SECRET_KEY: ${CRM_S3_SECRET_KEY:?set CRM_S3_SECRET_KEY in .env}
+  CRM_S3_BUCKET: ${CRM_S3_BUCKET:-crm-attachments}
+
+# One image for db-init, migrate, app and seed; every service that runs it can build it, so
+# `up --build app` rebuilds it even though db-init and migrate start first.
+x-app-build: &app-build
+  context: ..
+  dockerfile: Dockerfile
+
+services:
+  postgres:
+    image: postgres:18.6
+    # Settings stated here rather than left to defaults (perf/README.md compares runs with them):
+    command:
+      - postgres
+      # Statistics for perf/sql: statements (also those inside functions) and time per PL/pgSQL routine.
+      - -c
+      - shared_preload_libraries=pg_stat_statements
+      - -c
+      - pg_stat_statements.track=all
+      - -c
+      - track_functions=pl
+      - -c
+      - track_io_timing=on
+      # 2 GB of cache: the hot part of the seeded set (indexes of clients and projects) fits; SQL Server Express
+      # in the earlier runs was capped at a 1.4 GB buffer pool. The OS cache holds the rest.
+      - -c
+      - shared_buffers=2GB
+      - -c
+      - effective_cache_size=8GB
+      # Sorts of one page are tiny; 16 MB per sort node is plenty and safe for 30 API connections.
+      - -c
+      - work_mem=16MB
+      # Index builds after the seed's bulk load.
+      - -c
+      - maintenance_work_mem=1GB
+      # The seed writes a few GB in one transaction: fewer forced checkpoints.
+      - -c
+      - max_wal_size=8GB
+      # Local NVMe: random reads cost about the same as sequential ones.
+      - -c
+      - random_page_cost=1.1
+      # API pool (CRM_DB_POOL_SIZE=30) + migrate/seed/psql; the default 100 leaves room.
+      - -c
+      - max_connections=100
+    # Parallel query workers share memory through /dev/shm (64 MB by default in Docker).
+    shm_size: 1gb
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+    ports:
+      - "127.0.0.1:${CRM_DB_HOST_PORT:-15432}:5432"
+    volumes:
+      # PostgreSQL 18 images keep the data in a versioned directory under /var/lib/postgresql.
+      - pg-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
+
+  # S3-compatible storage for desk attachments; the bucket is private (the app streams files to agents itself).
+  rustfs:
+    image: rustfs/rustfs:1.0.0
+    environment:
+      RUSTFS_ACCESS_KEY: ${CRM_S3_ACCESS_KEY}
+      RUSTFS_SECRET_KEY: ${CRM_S3_SECRET_KEY}
+      RUSTFS_VOLUMES: /data
+      RUSTFS_ADDRESS: ":9000"
+      RUSTFS_CONSOLE_ADDRESS: ":9001"
+      RUSTFS_CONSOLE_ENABLE: "true"
+      RUSTFS_OBS_LOGGER_LEVEL: warn
+    ports:
+      - "127.0.0.1:${CRM_S3_HOST_PORT:-19000}:9000"
+      - "127.0.0.1:${CRM_S3_CONSOLE_HOST_PORT:-19001}:9001"
+    volumes:
+      - rustfs-data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:9000/health || wget -qO- http://127.0.0.1:9000/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 5s
+
+  # One-shot: creates the attachments bucket (idempotent, retries).
+  rustfs-init:
+    image: curlimages/curl:8.17.0
+    entrypoint: ["/bin/sh", "/create-bucket.sh"]
+    environment:
+      S3_ENDPOINT: http://rustfs:9000
+      S3_ACCESS_KEY: ${CRM_S3_ACCESS_KEY}
+      S3_SECRET_KEY: ${CRM_S3_SECRET_KEY}
+      S3_BUCKET: ${CRM_S3_BUCKET:-crm-attachments}
+      S3_REGION: us-east-1
+    volumes:
+      - ./rustfs/create-bucket.sh:/create-bucket.sh:ro
+    depends_on:
+      rustfs:
+        condition: service_healthy
+    restart: "no"
+
+  # One-shot: roles and the database (db/init/*.sql), superuser. Idempotent.
+  db-init:
+    build: *app-build
+    image: crm-app:local
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      <<: *app-env
+      CRM_MODE: init
+      CRM_DB_ADMIN_USER: postgres
+      CRM_DB_ADMIN_PASSWORD: ${POSTGRES_PASSWORD}
+    restart: "no"
+
+  # One-shot: db/migration with the migrator login (as crm_owner).
+  migrate:
+    build: *app-build
+    image: crm-app:local
+    depends_on:
+      db-init:
+        condition: service_completed_successfully
+    environment:
+      <<: *app-env
+      CRM_MODE: migrate
+    restart: "no"
+
+  app:
+    build: *app-build
+    image: crm-app:local
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      rustfs-init:
+        condition: service_completed_successfully
+    environment:
+      <<: *app-env
+      CRM_MODE: app
+      CRM_ADMIN_LOGIN: ${CRM_ADMIN_LOGIN:-admin}
+      CRM_ADMIN_PASSWORD: ${CRM_ADMIN_PASSWORD:?set CRM_ADMIN_PASSWORD in .env}
+      CRM_DB_POOL_SIZE: ${CRM_DB_POOL_SIZE:-30}
+      CRM_LOGIN_MAX_FAILED: ${CRM_LOGIN_MAX_FAILED:-5}
+      CRM_LOGIN_LOCK_MINUTES: ${CRM_LOGIN_LOCK_MINUTES:-15}
+      # Local stack: one-click login as a seeded user on the login page. Never set it on a shared server.
+      CRM_DEV_LOGIN: ${CRM_DEV_LOGIN:-true}
+      CRM_DESK_PUBLIC_REPORTS_PER_MINUTE: ${CRM_DESK_PUBLIC_REPORTS_PER_MINUTE:-30}
+    ports:
+      - "127.0.0.1:${CRM_HTTP_PORT:-8088}:8080"
+    restart: unless-stopped
+
+  # One-shot, opt-in: ./start.sh --seed (defaults: 5M clients, 5M projects, 2M comments, 5000 users).
+  seed:
+    image: crm-app:local
+    profiles: ["seed"]
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    environment:
+      <<: *app-env
+      CRM_MODE: seed
+      CRM_SEED_PASSWORD: ${CRM_SEED_PASSWORD:?set CRM_SEED_PASSWORD in .env}
+      CRM_SEED_CLIENTS: ${CRM_SEED_CLIENTS:-5000000}
+      CRM_SEED_ADMINS: ${CRM_SEED_ADMINS:-10}
+      CRM_SEED_MANAGERS: ${CRM_SEED_MANAGERS:-490}
+      CRM_SEED_SALES: ${CRM_SEED_SALES:-4500}
+      CRM_SEED_TEAM_SIZE: ${CRM_SEED_TEAM_SIZE:-5}
+      CRM_SEED_PROJECTS: ${CRM_SEED_PROJECTS:-5000000}
+      CRM_SEED_COMMENTS: ${CRM_SEED_COMMENTS:-2000000}
+      CRM_SEED_RANDOM_SEED: ${CRM_SEED_RANDOM_SEED:-42}
+      CRM_SEED_BATCH_SIZE: ${CRM_SEED_BATCH_SIZE:-500000}
+      CRM_SEED_DESK_TICKETS: ${CRM_SEED_DESK_TICKETS:-200}
+      CRM_SEED_DESK_ONLY: ${CRM_SEED_DESK_ONLY:-false}
+    restart: "no"
+
+  # Opt-in: ./start.sh --k6 <script>; results go to perf/results/.
+  k6:
+    image: grafana/k6:latest
+    profiles: ["perf"]
+    # Write results as the host user (start.sh sets K6_UID/K6_GID).
+    user: "${K6_UID:-1000}:${K6_GID:-1000}"
+    depends_on:
+      app:
+        condition: service_healthy
+    environment:
+      BASE_URL: http://app:8080
+      CRM_SEED_PASSWORD: ${CRM_SEED_PASSWORD}
+      K6_SCRIPT: ${K6_SCRIPT:-crm-mixed.js}
+      VUS: ${K6_VUS:-200}
+      RAMP: ${K6_RAMP:-2m}
+      HOLD: ${K6_HOLD:-10m}
+      RAMP_DOWN: ${K6_RAMP_DOWN:-1m}
+      RESULTS_DIR: /perf/results/${K6_RESULTS_NAME:-latest}
+    volumes:
+      - ../perf:/perf
+    entrypoint: ["sh", "-c", "mkdir -p \"$$RESULTS_DIR\" && k6 run /perf/k6/$$K6_SCRIPT"]
+    restart: "no"
+
+volumes:
+  pg-data:
+  rustfs-data:

@@ -1,0 +1,17 @@
+procedure|calls|avg_ms|max_ms|avg_cpu_ms|avg_logical_reads|max_logical_reads
+---------|-----|------|------|----------|-----------------|-----------------
+app.project_search|43717|2.67|37.53|2.52|3973|13571
+app.client_search|66278|.53|33.79|.45|629|9959
+app.project_comment_add|10532|1.44|32.55|1.28|22|43
+app.project_change_stage|6757|2.12|40.09|1.62|117|167
+app.client_update|10390|1.36|30.35|1.26|20|42
+app.client_create|8562|1.43|32.13|1.31|35|100
+app.project_create|5105|1.56|30.89|1.45|85|165
+app.project_get|31692|.14|1.20|.14|17|18
+app.project_stage_history_list|21159|.19|30.32|.11|11|46
+app.project_comment_list|16821|.21|30.92|.15|15|107
+app.client_get|31484|.09|.38|.09|11|12
+app.team_project_stats|10410|.08|.36|.08|6|7
+app.user_login_succeeded|200|1.77|31.96|1.42|2|8
+app.user_get_for_login|200|.10|8.58|.05|4|4
+app.health_ping|90|.01|.01|.01|0|0

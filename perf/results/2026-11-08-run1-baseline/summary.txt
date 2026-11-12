@@ -1,0 +1,44 @@
+     ✓ login 200
+     ✓ clients 200
+     ✓ projects 200
+     ✓ comments 200
+     ✓ comment 201
+     ✓ client 200
+     ✓ project 200
+     ✓ stats 200
+     ✓ client create 201
+     ✓ stage 200
+     ✓ project create 201
+     ✓ client update 200
+
+     checks.........................: 100.00% ✓ 204172     ✗ 0     
+     data_received..................: 821 MB  1.1 MB/s
+     data_sent......................: 79 MB   101 kB/s
+     ep_client_create...............: avg=2.88ms   min=1.11ms   med=2.18ms   p(90)=3.7ms    p(95)=6.29ms   p(99)=16.3ms   max=49.86ms 
+     ep_client_get..................: avg=648.9µs  min=206.61µs med=472.77µs p(90)=780.17µs p(95)=1.29ms   p(99)=4.52ms   max=40.87ms 
+     ep_client_update...............: avg=2.47ms   min=944.43µs med=1.98ms   p(90)=3.05ms   p(95)=4.44ms   p(99)=13.35ms  max=49.09ms 
+     ep_clients_search..............: avg=6.25ms   min=1.41ms   med=5.28ms   p(90)=10.21ms  p(95)=12.01ms  p(99)=24.88ms  max=253.46ms
+     ep_clients_search_next.........: avg=4.43ms   min=1.47ms   med=4.18ms   p(90)=6.48ms   p(95)=7.91ms   p(99)=13.38ms  max=93.23ms 
+     ep_comment_add.................: avg=2.8ms    min=1.13ms   med=2.11ms   p(90)=3.55ms   p(95)=5.99ms   p(99)=17.1ms   max=48.79ms 
+     ep_login.......................: avg=45.5ms   min=41.04ms  med=43.15ms  p(90)=54.13ms  p(95)=56.68ms  p(99)=68.78ms  max=75.11ms 
+     ep_project_comments............: avg=1.02ms   min=271.73µs med=679.89µs p(90)=1.11ms   p(95)=2.64ms   p(99)=8.98ms   max=39.98ms 
+     ep_project_create..............: avg=3.15ms   min=1.3ms    med=2.39ms   p(90)=4.04ms   p(95)=6.85ms   p(99)=18.69ms  max=78.06ms 
+     ep_project_get.................: avg=731.54µs min=238.8µs  med=546.87µs p(90)=873.94µs p(95)=1.37ms   p(99)=4.86ms   max=47.18ms 
+     ep_project_stage...............: avg=3.93ms   min=1.76ms   med=3.14ms   p(90)=4.88ms   p(95)=7.39ms   p(99)=21.36ms  max=83.84ms 
+     ep_project_stages..............: avg=794.3µs  min=208.71µs med=561.31µs p(90)=861.84µs p(95)=1.31ms   p(99)=8.23ms   max=31.7ms  
+     ep_projects_search.............: avg=45.27ms  min=3.36ms   med=47.06ms  p(90)=71.19ms  p(95)=85.16ms  p(99)=110.86ms max=6.76s   
+     ep_team_stats..................: avg=627.14µs min=201.5µs  med=458.35µs p(90)=753.7µs  p(95)=1.31ms   p(99)=4.29ms   max=42.02ms 
+     http_req_blocked...............: avg=3.45µs   min=351ns    med=2µs      p(90)=2.95µs   p(95)=3.41µs   p(99)=106.19µs max=9.85ms  
+     http_req_connecting............: avg=1.05µs   min=0s       med=0s       p(90)=0s       p(95)=0s       p(99)=75.97µs  max=9.83ms  
+   ✓ http_req_duration..............: avg=9.74ms   min=201.5µs  med=2.16ms   p(90)=41.02ms  p(95)=56.12ms  p(99)=81.21ms  max=6.76s   
+       { expected_response:true }...: avg=9.74ms   min=201.5µs  med=2.16ms   p(90)=41.02ms  p(95)=56.12ms  p(99)=81.21ms  max=6.76s   
+   ✓ http_req_failed................: 0.00%   ✓ 0          ✗ 260563
+     http_req_receiving.............: avg=21.81µs  min=3.6µs    med=18.77µs  p(90)=39.23µs  p(95)=49.85µs  p(99)=76.6µs   max=2.31ms  
+     http_req_sending...............: avg=6.29µs   min=1.27µs   med=5.93µs   p(90)=9.21µs   p(95)=10.71µs  p(99)=14.62µs  max=148.37µs
+     http_req_tls_handshaking.......: avg=0s       min=0s       med=0s       p(90)=0s       p(95)=0s       p(99)=0s       max=0s      
+     http_req_waiting...............: avg=9.71ms   min=186.03µs med=2.13ms   p(90)=40.96ms  p(95)=56.06ms  p(99)=81.14ms  max=6.76s   
+     http_reqs......................: 260563  334.049577/s
+     iteration_duration.............: avg=662.64ms min=300.5ms  med=662.2ms  p(90)=942.61ms p(95)=977.48ms p(99)=1.01s    max=7.39s   
+     iterations.....................: 208318  267.06992/s
+     vus............................: 1       min=1        max=200 
+     vus_max........................: 200     min=200      max=200 

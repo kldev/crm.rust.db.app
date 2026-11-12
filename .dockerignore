@@ -1,0 +1,9 @@
+**
+!db/
+!server/Cargo.toml
+!server/Cargo.lock
+!server/assets/
+!server/src/
+!frontend/
+frontend/node_modules
+frontend/dist

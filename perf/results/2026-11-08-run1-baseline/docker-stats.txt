@@ -1,0 +1,84 @@
+12:07:00
+crm-app-1 cpu=0.06% mem=438.1MiB / 30.46GiB
+crm-mssql-1 cpu=10.93% mem=3.874GiB / 30.46GiB
+12:07:33
+crm-app-1 cpu=25.46% mem=443.3MiB / 30.46GiB
+crm-mssql-1 cpu=49.88% mem=3.878GiB / 30.46GiB
+12:08:05
+crm-app-1 cpu=23.68% mem=458.1MiB / 30.46GiB
+crm-mssql-1 cpu=110.57% mem=3.881GiB / 30.46GiB
+12:08:37
+crm-app-1 cpu=19.94% mem=461MiB / 30.46GiB
+crm-mssql-1 cpu=294.66% mem=3.882GiB / 30.46GiB
+12:09:09
+crm-app-1 cpu=11.34% mem=471.5MiB / 30.46GiB
+crm-mssql-1 cpu=313.59% mem=3.898GiB / 30.46GiB
+12:09:41
+crm-app-1 cpu=10.80% mem=473.2MiB / 30.46GiB
+crm-mssql-1 cpu=268.44% mem=3.888GiB / 30.46GiB
+12:10:13
+crm-app-1 cpu=11.32% mem=473.8MiB / 30.46GiB
+crm-mssql-1 cpu=247.98% mem=3.883GiB / 30.46GiB
+12:10:45
+crm-app-1 cpu=11.34% mem=475.8MiB / 30.46GiB
+crm-mssql-1 cpu=265.23% mem=3.886GiB / 30.46GiB
+12:11:17
+crm-app-1 cpu=10.07% mem=475.6MiB / 30.46GiB
+crm-mssql-1 cpu=246.02% mem=3.881GiB / 30.46GiB
+12:11:49
+crm-app-1 cpu=9.72% mem=475.6MiB / 30.46GiB
+crm-mssql-1 cpu=219.92% mem=3.879GiB / 30.46GiB
+12:12:21
+crm-app-1 cpu=9.73% mem=476MiB / 30.46GiB
+crm-mssql-1 cpu=258.76% mem=3.877GiB / 30.46GiB
+12:12:53
+crm-app-1 cpu=9.83% mem=477.5MiB / 30.46GiB
+crm-mssql-1 cpu=259.80% mem=3.874GiB / 30.46GiB
+12:13:25
+crm-app-1 cpu=8.66% mem=477.4MiB / 30.46GiB
+crm-mssql-1 cpu=198.36% mem=3.874GiB / 30.46GiB
+12:13:57
+crm-app-1 cpu=10.21% mem=478.4MiB / 30.46GiB
+crm-mssql-1 cpu=304.88% mem=3.872GiB / 30.46GiB
+12:14:29
+crm-app-1 cpu=11.95% mem=478.7MiB / 30.46GiB
+crm-mssql-1 cpu=290.84% mem=3.872GiB / 30.46GiB
+12:15:01
+crm-app-1 cpu=9.72% mem=479.4MiB / 30.46GiB
+crm-mssql-1 cpu=243.30% mem=3.871GiB / 30.46GiB
+12:15:33
+crm-app-1 cpu=9.61% mem=479.1MiB / 30.46GiB
+crm-mssql-1 cpu=266.89% mem=3.87GiB / 30.46GiB
+12:16:05
+crm-app-1 cpu=10.28% mem=481.2MiB / 30.46GiB
+crm-mssql-1 cpu=273.16% mem=3.871GiB / 30.46GiB
+12:16:38
+crm-app-1 cpu=10.47% mem=481.5MiB / 30.46GiB
+crm-mssql-1 cpu=293.69% mem=3.87GiB / 30.46GiB
+12:17:10
+crm-app-1 cpu=9.70% mem=481.9MiB / 30.46GiB
+crm-mssql-1 cpu=224.25% mem=3.868GiB / 30.46GiB
+12:17:42
+crm-app-1 cpu=9.43% mem=482.6MiB / 30.46GiB
+crm-mssql-1 cpu=225.36% mem=3.868GiB / 30.46GiB
+12:18:14
+crm-app-1 cpu=9.20% mem=482MiB / 30.46GiB
+crm-mssql-1 cpu=230.39% mem=3.867GiB / 30.46GiB
+12:18:46
+crm-app-1 cpu=10.75% mem=482.8MiB / 30.46GiB
+crm-mssql-1 cpu=254.27% mem=3.865GiB / 30.46GiB
+12:19:18
+crm-app-1 cpu=7.81% mem=483.9MiB / 30.46GiB
+crm-mssql-1 cpu=161.21% mem=3.875GiB / 30.46GiB
+12:19:50
+crm-app-1 cpu=3.39% mem=483.6MiB / 30.46GiB
+crm-mssql-1 cpu=38.87% mem=3.871GiB / 30.46GiB
+12:20:22
+crm-app-1 cpu=0.08% mem=482MiB / 30.46GiB
+crm-mssql-1 cpu=0.96% mem=3.871GiB / 30.46GiB
+12:20:54
+crm-app-1 cpu=0.06% mem=481.8MiB / 30.46GiB
+crm-mssql-1 cpu=0.96% mem=3.871GiB / 30.46GiB
+12:21:26
+crm-app-1 cpu=0.04% mem=481.8MiB / 30.46GiB
+crm-mssql-1 cpu=0.55% mem=3.871GiB / 30.46GiB
