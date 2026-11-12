@@ -26,8 +26,8 @@ const ICONS: Record<string, LucideIcon> = {
 export function CategoryIcon({ categoryKey }: { categoryKey: string }) {
 	const Icon = ICONS[categoryKey] ?? Tag;
 	return (
-		<span className="flex size-9 items-center justify-center rounded-lg bg-accent-soft text-ink">
-			<Icon className="size-4" strokeWidth={1.75} />
+		<span className="flex size-10 items-center justify-center rounded-md bg-accent-soft text-accent">
+			<Icon className="size-5" strokeWidth={1.75} />
 		</span>
 	);
 }

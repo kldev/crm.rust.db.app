@@ -8,7 +8,15 @@ import {
 	RadioGroup,
 	SearchField,
 } from "@heroui/react";
-import { Check } from "lucide-react";
+import {
+	Check,
+	FileText,
+	Gauge,
+	type LucideIcon,
+	Paperclip,
+	Shapes,
+	UserRound,
+} from "lucide-react";
 import { type ReactNode, useMemo, useState } from "react";
 import { z } from "zod";
 import type { DeskCatalog, PublicPerson } from "#/api/models";
@@ -52,8 +60,8 @@ export function localNow(offsetDays = 0): string {
  * requester - a person from the list or incognito. The agent's form also takes the report date (up to 30 days back).
  * zod checks what the form can know; the procedure is the authority and its refusal shows under the form.
  *
- * variant "wizard" (the signed-in agent's dialog) shows the same sections a step at a time, inside a Modal.Dialog:
- * "Next" checks only the step's fields, so a missing title never blocks choosing the topic.
+ * It is a wizard: a step at a time, "Next" checks only the step's fields, so a missing title never blocks choosing the
+ * topic. frame "dialog" fills a Modal.Dialog (the signed-in agent), frame "page" a card on the public page.
  */
 export function ReportForm({
 	catalog,
@@ -63,7 +71,7 @@ export function ReportForm({
 	error,
 	onSubmit,
 	initial,
-	variant = "page",
+	frame,
 	onCancel,
 }: {
 	catalog: DeskCatalog;
@@ -78,9 +86,9 @@ export function ReportForm({
 	> & {
 		fields?: FieldValues;
 	};
-	/** page: every section on one page; wizard: a step at a time, for a Modal.Dialog. */
-	variant?: "page" | "wizard";
-	/** wizard: "Cancel" on the first step. */
+	/** dialog: body and footer of a Modal.Dialog; page: a card of its own. */
+	frame: "dialog" | "page";
+	/** "Cancel" on the first step (the dialog). */
 	onCancel?: () => void;
 }) {
 	const i18n = useI18n();
@@ -128,9 +136,8 @@ export function ReportForm({
 				}),
 		[base, t, mode],
 	);
-	const wizard = variant === "wizard";
 	const [step, setStep] = useState(0);
-	const stages = wizardStages(i18n);
+	const stages = wizardStages(i18n, mode);
 	/** Fields of the given keys the form would refuse now (the refinements included). */
 	const invalidOf = (keys: readonly (keyof ReportValues)[]) => {
 		const v = form.state.values;
@@ -149,8 +156,7 @@ export function ReportForm({
 		for (const k of bad) form.setFieldMeta(k, (m) => ({ ...m, isTouched: true }));
 		void form.validate("change");
 	};
-	const at = (i: number) => !wizard || step === i;
-	const num = (n: number) => (wizard ? undefined : n);
+	const at = (i: number) => step === i;
 
 	const form = useAppForm({
 		defaultValues: {
@@ -164,7 +170,7 @@ export function ReportForm({
 			reportedAt: mode === "agent" ? localNow() : "",
 		} as ReportValues,
 		validators: { onChange: schema },
-		// Wizard: a refusal sends the agent back to the first step with a wrong field.
+		// A refusal sends the user back to the first step with a wrong field.
 		onSubmitInvalid: () => {
 			const first = stages.findIndex((st) => invalidOf(st.fields).length > 0);
 			if (first >= 0) setStep(first);
@@ -185,7 +191,7 @@ export function ReportForm({
 	const sections = (
 		<>
 			{at(0) ? (
-				<Step n={num(1)} title={t("Czego dotyczy sprawa?", "What is it about?")}>
+				<Step title={t("Czego dotyczy sprawa?", "What is it about?")}>
 					<form.Field name="categoryKey">
 						{(field) => (
 							<div className="flex flex-col gap-2">
@@ -204,10 +210,10 @@ export function ReportForm({
 													field.handleChange(c.key);
 													form.setFieldValue("subcategoryKey", "");
 												}}
-												className={`flex flex-col items-start gap-2 rounded-xl border p-4 text-left transition-colors ${
+												className={`flex flex-col items-start gap-2.5 rounded-md border p-4 text-left transition-all ${
 													chosen
-														? "border-accent bg-accent-soft ring-1 ring-accent"
-														: "border-separator bg-surface hover:bg-surface-secondary"
+														? "border-accent bg-surface ring-2 ring-accent/25"
+														: "border-separator bg-surface hover:border-accent/40 hover:shadow-sm"
 												}`}
 											>
 												<CategoryIcon categoryKey={c.key} />
@@ -241,7 +247,7 @@ export function ReportForm({
 							...new Set(category.subcategories.filter((s) => s.active).map((s) => s.market ?? "")),
 						];
 						return (
-							<Step n={num(2)} title={t("Temat", "Topic")}>
+							<Step title={t("Temat", "Topic")}>
 								<form.Field name="subcategoryKey">
 									{(field) => (
 										<div className="flex flex-col gap-4">
@@ -295,7 +301,7 @@ export function ReportForm({
 			) : null}
 
 			{at(1) ? (
-				<Step n={num(3)} title={t("Opis sprawy", "The request")}>
+				<Step title={t("Opis sprawy", "The request")}>
 					<div className="flex flex-col gap-4">
 						<form.AppField name="title">
 							{(field) => (
@@ -322,7 +328,7 @@ export function ReportForm({
 			) : null}
 
 			{at(2) ? (
-				<Step n={num(4)} title={t("Priorytet", "Priority")}>
+				<Step title={t("Priorytet", "Priority")}>
 					<form.Field name="priority">
 						{(field) => (
 							<RadioGroup
@@ -365,7 +371,7 @@ export function ReportForm({
 			) : null}
 
 			{mode === "agent" && at(2) ? (
-				<Step n={num(7)} title={t("Kiedy zgłoszono?", "When was it reported?")}>
+				<Step title={t("Kiedy zgłoszono?", "When was it reported?")}>
 					<form.Field name="reportedAt">
 						{(field) => (
 							<DateInput
@@ -391,7 +397,7 @@ export function ReportForm({
 			) : null}
 
 			{at(3) ? (
-				<Step n={num(5)} title={t("Kto zgłasza?", "Who is asking?")}>
+				<Step title={t("Kto zgłasza?", "Who is asking?")}>
 					<form.Field name="requesterPersonId">
 						{(field) => (
 							<form.Subscribe selector={(s) => s.values.requesterIncognito}>
@@ -433,7 +439,7 @@ export function ReportForm({
 			) : null}
 
 			{at(4) ? (
-				<Step n={num(6)} title={t("Załączniki (opcjonalnie)", "Attachments (optional)")}>
+				<Step title={t("Załączniki (opcjonalnie)", "Attachments (optional)")}>
 					<form.Subscribe selector={(st) => st.values.categoryKey}>
 						{(categoryKey) => (
 							<AttachmentPicker
@@ -448,7 +454,7 @@ export function ReportForm({
 				</Step>
 			) : null}
 
-			{wizard && at(4) ? (
+			{at(4) ? (
 				<form.Subscribe selector={(st) => st.values}>
 					{(v) => {
 						const category = catalog.categories.find((c) => c.key === v.categoryKey);
@@ -501,84 +507,89 @@ export function ReportForm({
 		/>
 	);
 
-	if (wizard) {
-		const last = step === stages.length - 1;
-		return (
-			<form
-				noValidate
-				className="contents"
-				onSubmit={(event) => {
-					event.preventDefault();
-					// Enter in a field moves on; only the last step sends.
-					if (last) void form.handleSubmit();
-					else next();
-				}}
-			>
-				<Modal.Body>
-					<div className="flex min-h-[420px] flex-col gap-6 py-2">
-						<Stepper stages={stages} step={step} onPick={(i) => i < step && setStep(i)} />
-						{sections}
-						{last ? apiError : null}
-					</div>
-				</Modal.Body>
-				<Modal.Footer className="border-t border-separator pt-4">
-					<span className="mr-auto font-mono text-xs text-muted">
-						{t(`Krok ${step + 1} z ${stages.length}`, `Step ${step + 1} of ${stages.length}`)}
-					</span>
-					{step === 0 ? (
-						<Button variant="secondary" onPress={onCancel}>
-							{t("Anuluj", "Cancel")}
-						</Button>
-					) : (
-						<Button variant="secondary" onPress={() => setStep(step - 1)}>
-							{t("Wstecz", "Back")}
-						</Button>
-					)}
-					{last ? (
-						<Button type="submit" isPending={isPending}>
-							{submitLabel}
-						</Button>
-					) : (
-						<Button type="submit">{t("Dalej", "Next")}</Button>
-					)}
-				</Modal.Footer>
-			</form>
-		);
-	}
+	const last = step === stages.length - 1;
+	const body = (
+		<div className="flex flex-col gap-6">
+			<Stepper stages={stages} step={step} onPick={(i) => i < step && setStep(i)} />
+			<div className="flex flex-col gap-6">{sections}</div>
+			{last ? apiError : null}
+		</div>
+	);
+	const buttons = (
+		<>
+			<span className="mr-auto font-mono text-xs text-muted">
+				{t(`Krok ${step + 1} z ${stages.length}`, `Step ${step + 1} of ${stages.length}`)}
+			</span>
+			{step > 0 ? (
+				<Button variant="secondary" onPress={() => setStep(step - 1)}>
+					{t("Wstecz", "Back")}
+				</Button>
+			) : onCancel ? (
+				<Button variant="secondary" onPress={onCancel}>
+					{t("Anuluj", "Cancel")}
+				</Button>
+			) : null}
+			{last ? (
+				<Button type="submit" isPending={isPending}>
+					<Check className="size-4" />
+					{submitLabel}
+				</Button>
+			) : (
+				<Button type="submit">{t("Dalej", "Next")}</Button>
+			)}
+		</>
+	);
 
 	return (
 		<form
 			noValidate
-			className="flex flex-col gap-8"
+			className={frame === "dialog" ? "contents" : "flex flex-col"}
 			onSubmit={(event) => {
 				event.preventDefault();
-				void form.handleSubmit();
+				// Enter in a field moves on; only the last step sends.
+				if (last) void form.handleSubmit();
+				else next();
 			}}
 		>
-			{sections}
-			{apiError}
-			<div className="flex justify-end">
-				<Button type="submit" size="lg" isPending={isPending}>
-					{submitLabel}
-				</Button>
-			</div>
+			{frame === "dialog" ? (
+				<>
+					<Modal.Body>
+						<div className="min-h-[420px] py-2">{body}</div>
+					</Modal.Body>
+					<Modal.Footer className="border-t border-separator pt-4">{buttons}</Modal.Footer>
+				</>
+			) : (
+				<>
+					<div className="min-h-[440px] px-5 py-6 sm:px-8">{body}</div>
+					<div className="flex items-center gap-2 border-t border-separator bg-surface-secondary px-5 py-4 sm:px-8">
+						{buttons}
+					</div>
+				</>
+			)}
 		</form>
 	);
 }
 
 interface WizardStage {
 	title: string;
+	icon: LucideIcon;
 	fields: readonly (keyof ReportValues)[];
 }
 
-/** The agent's dialog: topic, the request, priority and date, requester, attachments with a summary. */
-function wizardStages({ t }: Pick<I18n, "t">): WizardStage[] {
+/** Topic, the request, priority (and the report date for an agent), requester, attachments with a summary. */
+function wizardStages({ t }: Pick<I18n, "t">, mode: "agent" | "public"): WizardStage[] {
 	return [
-		{ title: t("Temat", "Topic"), fields: ["categoryKey", "subcategoryKey"] },
-		{ title: t("Opis", "Request"), fields: ["title", "description"] },
-		{ title: t("Priorytet i data", "Priority and date"), fields: ["priority", "reportedAt"] },
-		{ title: t("Zgłaszający", "Requester"), fields: ["requesterPersonId"] },
-		{ title: t("Załączniki", "Attachments"), fields: [] },
+		{ title: t("Temat", "Topic"), icon: Shapes, fields: ["categoryKey", "subcategoryKey"] },
+		{ title: t("Opis", "Request"), icon: FileText, fields: ["title", "description"] },
+		mode === "agent"
+			? {
+					title: t("Priorytet i data", "Priority and date"),
+					icon: Gauge,
+					fields: ["priority", "reportedAt"],
+				}
+			: { title: t("Priorytet", "Priority"), icon: Gauge, fields: ["priority"] },
+		{ title: t("Zgłaszający", "Requester"), icon: UserRound, fields: ["requesterPersonId"] },
+		{ title: t("Załączniki", "Attachments"), icon: Paperclip, fields: [] },
 	];
 }
 
@@ -592,35 +603,50 @@ function Stepper({
 	onPick: (i: number) => void;
 }) {
 	return (
-		<ol className="flex flex-wrap items-center gap-x-2 gap-y-2 border-b border-separator pb-4">
+		<ol className="flex items-start">
 			{stages.map((st, i) => {
 				const done = i < step;
 				const current = i === step;
+				const Icon = done ? Check : st.icon;
 				return (
-					<li key={st.title} className="flex items-center gap-2">
+					<li key={st.title} className="flex flex-1 items-start last:flex-none">
 						<button
 							type="button"
 							disabled={!done}
 							onClick={() => onPick(i)}
 							aria-current={current ? "step" : undefined}
-							className={`flex items-center gap-2 rounded px-1.5 py-1 text-sm ${
-								done ? "cursor-pointer text-foreground hover:bg-default" : "cursor-default"
-							} ${current ? "font-semibold text-foreground" : done ? "" : "text-muted"}`}
+							aria-label={st.title}
+							className={`group flex flex-col items-center gap-1.5 ${done ? "cursor-pointer" : "cursor-default"}`}
 						>
 							<span
-								className={`flex size-6 items-center justify-center rounded-full font-mono text-[11px] ${
+								className={`flex size-9 items-center justify-center rounded-full border-2 transition-colors ${
 									done
-										? "bg-accent text-accent-foreground"
+										? "border-accent bg-accent text-accent-foreground group-hover:bg-accent-hover"
 										: current
-											? "bg-ink text-white"
-											: "border border-border bg-surface"
+											? "border-accent bg-accent-soft text-accent shadow-[0_0_0_4px_var(--accent-soft)]"
+											: "border-border bg-surface text-muted"
 								}`}
 							>
-								{done ? <Check className="size-3.5" strokeWidth={2.5} /> : i + 1}
+								<Icon className="size-4" strokeWidth={done ? 2.5 : 1.75} />
 							</span>
-							{st.title}
+							<span
+								className={`hidden text-xs whitespace-nowrap sm:block ${
+									current
+										? "font-semibold text-foreground"
+										: done
+											? "text-foreground"
+											: "text-muted"
+								}`}
+							>
+								{st.title}
+							</span>
 						</button>
-						{i < stages.length - 1 ? <span className="h-px w-6 bg-border" aria-hidden /> : null}
+						{i < stages.length - 1 ? (
+							<span
+								aria-hidden
+								className={`mx-2 mt-[18px] h-0.5 flex-1 rounded-full ${done ? "bg-accent" : "bg-border"}`}
+							/>
+						) : null}
 					</li>
 				);
 			})}
@@ -637,17 +663,10 @@ function SummaryRow({ label, children }: { label: string; children: ReactNode })
 	);
 }
 
-function Step({ n, title, children }: { n?: number; title: string; children: ReactNode }) {
+function Step({ title, children }: { title: string; children: ReactNode }) {
 	return (
 		<section className="flex flex-col gap-3">
-			<h2 className="flex items-center gap-3 font-display text-xl font-semibold text-foreground">
-				{n ? (
-					<span className="flex size-7 items-center justify-center rounded-full bg-accent-soft font-mono text-xs text-ink">
-						{n}
-					</span>
-				) : null}
-				{title}
-			</h2>
+			<h2 className="font-display text-lg font-semibold text-foreground">{title}</h2>
 			{children}
 		</section>
 	);

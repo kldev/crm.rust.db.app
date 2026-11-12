@@ -10,6 +10,7 @@ import {
 	TextField,
 } from "@heroui/react";
 import type { FieldDefinitionResponse } from "#/api/models";
+import { DateInput } from "#/components/ui/DateInput";
 import { useI18n } from "#/i18n";
 
 export type FieldValues = Record<string, string>;
@@ -134,8 +135,11 @@ function FieldInput({
 		);
 	}
 
+	if (field.kind === "DATE") {
+		return <DateInput fullWidth label={label} value={value} onChange={onChange} />;
+	}
+
 	const input = {
-		DATE: { type: "date" as const },
 		EMAIL: { type: "email" as const },
 		AMOUNT: { inputMode: "decimal" as const, placeholder: "1 234,56" },
 		COUNT: { inputMode: "numeric" as const },

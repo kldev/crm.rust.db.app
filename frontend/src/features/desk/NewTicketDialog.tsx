@@ -132,7 +132,7 @@ function NewTicketDialog({ prefill, onClose }: { prefill: NewTicketPrefill; onCl
 							</Modal.Body>
 						) : (
 							<ReportForm
-								variant="wizard"
+								frame="dialog"
 								mode="agent"
 								catalog={catalog.data}
 								people={people.data}
