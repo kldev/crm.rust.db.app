@@ -107,7 +107,7 @@ function ActionModal({
 						<Modal.CloseTrigger />
 						<Modal.Header>
 							<div className="flex flex-col gap-1">
-								<Modal.Heading className="font-display text-2xl">{title}</Modal.Heading>
+								<Modal.Heading className="font-display text-xl">{title}</Modal.Heading>
 								<p className="text-sm text-muted">{subtitle}</p>
 							</div>
 						</Modal.Header>

@@ -30,7 +30,7 @@ export function PublicReportPage() {
 		<div className="min-h-screen bg-background">
 			<header className="flex items-center gap-3 border-b border-separator bg-topbar px-4 py-3 sm:px-8">
 				<img src="/favicon.svg" alt="" className="size-7" />
-				<span className="font-display text-xl font-semibold">
+				<span className="font-display text-lg font-semibold">
 					{t("Zgłoś sprawę", "Report a request")}
 				</span>
 				<div className="ml-auto flex items-center gap-3">

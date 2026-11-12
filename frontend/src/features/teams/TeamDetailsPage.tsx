@@ -62,7 +62,7 @@ export function TeamDetailsPage() {
 			<div className="grid gap-6 lg:grid-cols-2">
 				<Card>
 					<Card.Header>
-						<Card.Title className="font-display text-xl">Delivery</Card.Title>
+						<Card.Title className="font-display text-lg">Delivery</Card.Title>
 						<Card.Description>
 							Read from an indexed view - a handful of rows, however many projects.
 						</Card.Description>
@@ -80,7 +80,7 @@ export function TeamDetailsPage() {
 
 				<Card>
 					<Card.Header>
-						<Card.Title className="font-display text-xl">Members</Card.Title>
+						<Card.Title className="font-display text-lg">Members</Card.Title>
 						<Card.Description>
 							{members.data ? `${members.data.length} people` : " "}
 						</Card.Description>
@@ -106,7 +106,7 @@ export function TeamDetailsPage() {
 
 			<Card className="mt-6 overflow-hidden p-0">
 				<div className="border-b border-separator px-5 py-4">
-					<h2 className="font-display text-xl font-semibold">Projects</h2>
+					<h2 className="font-display text-lg font-semibold">Projects</h2>
 				</div>
 				{projects.isPending ? (
 					<TableSkeleton rows={4} />

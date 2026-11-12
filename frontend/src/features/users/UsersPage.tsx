@@ -18,7 +18,7 @@ import { can, useMe } from "#/features/auth/session";
 import { ROLES, type RoleName, roleColor, roleLabel } from "#/features/types";
 import { formatRelative } from "#/lib";
 import { usersQuery, useSetUserActive } from "./hooks";
-import { UserDrawer, type UserDrawerCommand } from "./UserDrawer";
+import { UserDialog, type UserDialogCommand } from "./UserDialog";
 
 const route = getRouteApi("/_app/users");
 
@@ -28,7 +28,7 @@ export function UsersPage() {
 	const navigate = route.useNavigate();
 	const query = useInfiniteQuery(usersQuery(search.role));
 	const users = query.data?.pages.flatMap((p) => p.items) ?? [];
-	const drawer = useRef<UserDrawerCommand>(null);
+	const dialog = useRef<UserDialogCommand>(null);
 	const admin = can.manageUsers(me.role);
 	const setActive = useSetUserActive((u) =>
 		toast.success(`${u.displayName} is now ${u.active ? "active" : "inactive"}`),
@@ -46,7 +46,7 @@ export function UsersPage() {
 				}
 				actions={
 					admin ? (
-						<Button onPress={() => drawer.current?.create()}>
+						<Button onPress={() => dialog.current?.create()}>
 							<Plus className="size-4" /> New user
 						</Button>
 					) : null
@@ -128,8 +128,8 @@ export function UsersPage() {
 															<Dropdown.Popover placement="bottom end">
 																<Dropdown.Menu
 																	onAction={(key) => {
-																		if (key === "edit") drawer.current?.edit(u);
-																		if (key === "password") drawer.current?.resetPassword(u);
+																		if (key === "edit") dialog.current?.edit(u);
+																		if (key === "password") dialog.current?.resetPassword(u);
 																		if (key === "toggle")
 																			setActive.mutate(
 																				{ id: u.id, active: !u.active },
@@ -178,7 +178,7 @@ export function UsersPage() {
 					</>
 				)}
 			</Card>
-			<UserDrawer ref={drawer} />
+			<UserDialog ref={dialog} />
 		</>
 	);
 }

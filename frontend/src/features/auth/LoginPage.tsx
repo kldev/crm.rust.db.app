@@ -93,11 +93,7 @@ export function LoginPage() {
 			<section className="relative hidden overflow-hidden bg-sidebar px-14 py-12 text-sidebar-text lg:flex lg:flex-col">
 				<div
 					aria-hidden
-					className="pointer-events-none absolute -top-40 -right-40 size-[520px] rounded-full border border-champagne/20"
-				/>
-				<div
-					aria-hidden
-					className="pointer-events-none absolute -top-24 -right-24 size-[360px] rounded-full border border-champagne/10"
+					className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgb(56_198_224/0.07)_1px,transparent_1px),linear-gradient(to_bottom,rgb(56_198_224/0.07)_1px,transparent_1px)] bg-size-[40px_40px] [mask-image:radial-gradient(ellipse_at_top_right,black,transparent_70%)]"
 				/>
 				<div className="flex items-center gap-3">
 					<img src="/favicon.svg" alt="" className="size-9" />
@@ -107,20 +103,20 @@ export function LoginPage() {
 				</div>
 
 				<div className="mt-auto max-w-lg">
-					<p className="font-mono text-[11px] tracking-[0.16em] text-champagne uppercase">
+					<p className="font-mono text-[11px] tracking-[0.16em] text-signal uppercase">
 						Clients · Projects · Teams
 					</p>
-					<h1 className="mt-4 font-display text-6xl leading-[1.05] font-semibold text-white">
+					<h1 className="mt-4 relative font-display text-5xl leading-[1.05] font-bold text-white">
 						Every client,
 						<br />
 						every project,
 						<br />
-						<span className="text-champagne">one procedure away.</span>
+						<span className="text-signal">one procedure away.</span>
 					</h1>
 					<ul className="mt-10 flex flex-col gap-4">
 						{FACTS.map((fact) => (
 							<li key={fact.text} className="flex items-start gap-3 text-sm">
-								<fact.icon className="mt-0.5 size-4 shrink-0 text-champagne" strokeWidth={1.75} />
+								<fact.icon className="mt-0.5 size-4 shrink-0 text-signal" strokeWidth={1.75} />
 								<span>{fact.text}</span>
 							</li>
 						))}

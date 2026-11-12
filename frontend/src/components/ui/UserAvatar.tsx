@@ -1,6 +1,6 @@
 import { Avatar } from "@heroui/react";
 
-/** Obsidian avatars: obsidian disc, champagne initials. */
+/** Circuit avatars: navy disc, cyan initials. */
 export function UserAvatar({ name, size = "sm" }: { name: string; size?: "sm" | "md" | "lg" }) {
 	const initials = name
 		.split(/[\s.]+/)
@@ -9,8 +9,8 @@ export function UserAvatar({ name, size = "sm" }: { name: string; size?: "sm" | 
 		.map((part) => part[0]?.toUpperCase())
 		.join("");
 	return (
-		<Avatar size={size} className="bg-ink text-champagne">
-			<Avatar.Fallback className="bg-ink font-mono text-[11px] font-semibold tracking-wider text-champagne">
+		<Avatar size={size} className="bg-ink text-signal">
+			<Avatar.Fallback className="bg-ink font-mono text-[11px] font-semibold tracking-wider text-signal">
 				{initials || "?"}
 			</Avatar.Fallback>
 		</Avatar>

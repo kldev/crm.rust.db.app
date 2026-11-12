@@ -1,7 +1,7 @@
 export { ApiError } from "./ApiError";
 export { ConfirmDialog } from "./ConfirmDialog";
 export { EmptyState } from "./EmptyState";
-export { FormDrawer } from "./FormDrawer";
+export { FormDialog } from "./FormDialog";
 export { InfoList } from "./InfoList";
 export { LoadMore } from "./LoadMore";
 export { SelectFilter } from "./SelectFilter";

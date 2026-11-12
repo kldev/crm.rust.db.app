@@ -102,7 +102,7 @@ export function DashboardPage() {
 			<Card className="mt-6">
 				<Card.Header className="flex-row items-center justify-between">
 					<div>
-						<Card.Title className="font-display text-xl">Latest clients</Card.Title>
+						<Card.Title className="font-display text-lg">Latest clients</Card.Title>
 						<Card.Description>Newest first</Card.Description>
 					</div>
 					<Link to="/clients" className="text-sm text-muted hover:text-foreground">
@@ -160,11 +160,11 @@ function Shortcut({
 			to={to}
 			className="group flex items-center gap-4 rounded-xl border border-border bg-surface px-5 py-4 transition-colors hover:border-ink"
 		>
-			<span className="flex size-10 items-center justify-center rounded-lg bg-ink text-champagne">
+			<span className="flex size-10 items-center justify-center rounded-lg bg-ink text-signal">
 				<Icon className="size-5" strokeWidth={1.75} />
 			</span>
 			<span className="flex-1">
-				<span className="block font-display text-xl font-semibold">{title}</span>
+				<span className="block font-display text-lg font-semibold">{title}</span>
 				<span className="text-xs text-muted">{text}</span>
 			</span>
 			<ArrowRight className="size-4 text-muted transition-transform group-hover:translate-x-1" />
@@ -189,9 +189,9 @@ function Panel({
 		<Card>
 			<Card.Header className="flex-row items-start justify-between gap-4">
 				<div className="flex items-start gap-3">
-					<Icon className="mt-1 size-5 text-champagne" strokeWidth={1.75} />
+					<Icon className="mt-1 size-5 text-accent" strokeWidth={1.75} />
 					<div>
-						<Card.Title className="font-display text-xl">{title}</Card.Title>
+						<Card.Title className="font-display text-lg">{title}</Card.Title>
 						<Card.Description>{subtitle}</Card.Description>
 					</div>
 				</div>

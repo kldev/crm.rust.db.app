@@ -19,7 +19,7 @@ import { ApiError, EmptyState, InfoList, UserAvatar } from "#/components/ui";
 import { NEXT_STAGES, type Stage, stageAction, stageLabel } from "#/features/types";
 import { daysUntil, formatDate, formatDateTime, formatMoney, formatRelative } from "#/lib";
 import { projectCommentsQuery, projectQuery, projectStagesQuery, useAddComment } from "./hooks";
-import { type ProjectFormCommand, ProjectFormDrawer } from "./ProjectFormDrawer";
+import { type ProjectFormCommand, ProjectFormDialog } from "./ProjectFormDialog";
 import { StageChip } from "./StageChip";
 import { StageDialog } from "./StageDialog";
 import { StagePath } from "./StagePath";
@@ -31,7 +31,7 @@ export function ProjectDetailsPage() {
 	const search = route.useSearch();
 	const navigate = route.useNavigate();
 	const project = useQuery(projectQuery(projectId));
-	const drawer = useRef<ProjectFormCommand>(null);
+	const dialog = useRef<ProjectFormCommand>(null);
 	const [stageTarget, setStageTarget] = useState<Stage | null>(null);
 
 	if (project.isPending) {
@@ -92,7 +92,7 @@ export function ProjectDetailsPage() {
 							</Button>
 						))}
 						{isFinal ? null : (
-							<Button variant="secondary" onPress={() => drawer.current?.edit(p)}>
+							<Button variant="secondary" onPress={() => dialog.current?.edit(p)}>
 								<Pencil className="size-4" /> Edit
 							</Button>
 						)}
@@ -107,7 +107,7 @@ export function ProjectDetailsPage() {
 			<div className="grid gap-6 lg:grid-cols-3">
 				<Card className="lg:col-span-1">
 					<Card.Header>
-						<Card.Title className="font-display text-xl">Details</Card.Title>
+						<Card.Title className="font-display text-lg">Details</Card.Title>
 					</Card.Header>
 					<Card.Content>
 						<InfoList
@@ -193,7 +193,7 @@ export function ProjectDetailsPage() {
 				</Card>
 			</div>
 
-			<ProjectFormDrawer ref={drawer} onSaved={() => toast.success("Project saved")} />
+			<ProjectFormDialog ref={dialog} onSaved={() => toast.success("Project saved")} />
 			<StageDialog
 				project={p}
 				target={stageTarget}
@@ -307,7 +307,7 @@ function StageHistory({ projectId }: { projectId: number }) {
 		<ol className="relative ml-2 border-l border-border">
 			{history.data.map((h) => (
 				<li key={h.id} className="mb-6 ml-6 last:mb-0">
-					<span className="absolute -left-[5px] mt-1.5 size-2.5 rounded-full border-2 border-background bg-champagne" />
+					<span className="absolute -left-[5px] mt-1.5 size-2.5 rounded-full border-2 border-background bg-accent" />
 					<p className="text-sm">
 						{h.fromStage ? (
 							<>

@@ -9,7 +9,7 @@ import { CITIES, CLIENT_STATUSES, clientStatusLabel } from "#/features/types";
 import { useDebouncedValue } from "#/hooks/useDebouncedValue";
 import { useOnDemandTotal } from "#/hooks/useOnDemandTotal";
 import { formatRelative } from "#/lib";
-import { type ClientFormCommand, ClientFormDrawer } from "./ClientFormDrawer";
+import { type ClientFormCommand, ClientFormDialog } from "./ClientFormDialog";
 import { ClientStatusChip } from "./ClientStatusChip";
 import { clientsCountQuery, clientsQuery } from "./hooks";
 
@@ -19,7 +19,7 @@ export function ClientsPage() {
 	const search = route.useSearch();
 	const navigate = route.useNavigate();
 	const goTo = useNavigate();
-	const drawer = useRef<ClientFormCommand>(null);
+	const dialog = useRef<ClientFormCommand>(null);
 
 	// The text box is local while typing; the URL (and the query) follow 300 ms later.
 	const [text, setText] = useState(search.q ?? "");
@@ -45,7 +45,7 @@ export function ClientsPage() {
 						: "Newest first. Type the beginning of a name to search all clients."
 				}
 				actions={
-					<Button onPress={() => drawer.current?.create()}>
+					<Button onPress={() => dialog.current?.create()}>
 						<Plus className="size-4" />
 						New client
 					</Button>
@@ -165,8 +165,8 @@ export function ClientsPage() {
 				)}
 			</Card>
 
-			<ClientFormDrawer
-				ref={drawer}
+			<ClientFormDialog
+				ref={dialog}
 				onSaved={(client) => {
 					toast.success(`Client "${client.name}" created`);
 					void goTo({ to: "/clients/$clientId", params: { clientId: client.id } });

@@ -6,7 +6,7 @@ import { useMemo, useRef } from "react";
 import { PageHeader } from "#/components/layout/AppLayout";
 import { ApiError, EmptyState, UserAvatar } from "#/components/ui";
 import { can, useMe } from "#/features/auth/session";
-import { type CreateTeamCommand, CreateTeamDrawer } from "./CreateTeamDrawer";
+import { type CreateTeamCommand, CreateTeamDialog } from "./CreateTeamDialog";
 import { teamsQuery } from "./hooks";
 
 const route = getRouteApi("/_app/teams/");
@@ -17,7 +17,7 @@ export function TeamsPage() {
 	const search = route.useSearch();
 	const navigate = route.useNavigate();
 	const teams = useQuery(teamsQuery());
-	const drawer = useRef<CreateTeamCommand>(null);
+	const dialog = useRef<CreateTeamCommand>(null);
 
 	const filtered = useMemo(() => {
 		const q = (search.q ?? "").trim().toLowerCase();
@@ -33,7 +33,7 @@ export function TeamsPage() {
 				description="Each team is led by a manager and delivers projects; a project is owned by one of its members."
 				actions={
 					can.createTeams(me.role) ? (
-						<Button onPress={() => drawer.current?.open()}>
+						<Button onPress={() => dialog.current?.open()}>
 							<Plus className="size-4" /> New team
 						</Button>
 					) : null
@@ -83,7 +83,7 @@ export function TeamsPage() {
 							>
 								<Card className="h-full transition-shadow group-hover:shadow-md">
 									<Card.Header>
-										<Card.Title className="font-display text-2xl">{team.name}</Card.Title>
+										<Card.Title className="font-display text-xl">{team.name}</Card.Title>
 										<Card.Description className="font-mono text-[11px] tracking-[0.08em] uppercase">
 											Team #{team.id}
 										</Card.Description>
@@ -114,7 +114,7 @@ export function TeamsPage() {
 					) : null}
 				</>
 			)}
-			<CreateTeamDrawer ref={drawer} onCreated={(t) => toast.success(`Team "${t.name}" created`)} />
+			<CreateTeamDialog ref={dialog} onCreated={(t) => toast.success(`Team "${t.name}" created`)} />
 		</>
 	);
 }

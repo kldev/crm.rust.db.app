@@ -35,7 +35,7 @@ export function StageDialog({
 					<Modal.Dialog>
 						<Modal.CloseTrigger />
 						<Modal.Header>
-							<Modal.Heading className="font-display text-2xl">
+							<Modal.Heading className="font-display text-xl">
 								{target ? `${stageAction[target]} project` : ""}
 							</Modal.Heading>
 						</Modal.Header>

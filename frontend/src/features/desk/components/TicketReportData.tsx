@@ -7,6 +7,7 @@ import type { FieldDefinitionResponse, TicketResponse } from "#/api/models";
 import { ApiError, InfoList } from "#/components/ui";
 import { useI18n } from "#/i18n";
 import { deskCatalogQuery, linkedQuery, ticketFieldsQuery, useUpdateFields } from "../hooks";
+import { useNewTicket } from "../NewTicketDialog";
 import { StatusChip } from "./Badges";
 import { FieldInputs, type FieldValues } from "./FieldInputs";
 
@@ -98,7 +99,7 @@ function EditDialog({
 					<Modal.Dialog>
 						<Modal.CloseTrigger />
 						<Modal.Header>
-							<Modal.Heading className="font-display text-2xl">
+							<Modal.Heading className="font-display text-xl">
 								{t("Dane do raportu", "Report data")}
 							</Modal.Heading>
 						</Modal.Header>
@@ -137,6 +138,7 @@ function EditDialog({
 /** Recruitment: the campaigns ordered in marketing for this ticket, and a button that starts a new order. */
 export function LinkedCampaigns({ ticket }: { ticket: TicketResponse }) {
 	const { t } = useI18n();
+	const newTicket = useNewTicket();
 	const linked = useQuery(linkedQuery(ticket.id));
 	if (ticket.categoryKey !== "recruitment") return null;
 	return (
@@ -148,26 +150,27 @@ export function LinkedCampaigns({ ticket }: { ticket: TicketResponse }) {
 						{t("Zamówienia, które wskazują to zgłoszenie.", "Orders that point to this ticket.")}
 					</Card.Description>
 				</div>
-				<Link
-					to="/desk/new"
-					search={{
-						sub: "marketing.budget",
-						title: t(
-							`Kampania rekrutacyjna: ${ticket.title}`,
-							`Recruitment campaign: ${ticket.title}`,
-						),
-						desc: t(
-							`Kampania do zgłoszenia ${ticket.number}.`,
-							`A campaign for ticket ${ticket.number}.`,
-						),
-						related: ticket.number,
-					}}
+				<Button
+					size="sm"
+					variant="secondary"
+					onPress={() =>
+						newTicket({
+							sub: "marketing.budget",
+							title: t(
+								`Kampania rekrutacyjna: ${ticket.title}`,
+								`Recruitment campaign: ${ticket.title}`,
+							),
+							desc: t(
+								`Kampania do zgłoszenia ${ticket.number}.`,
+								`A campaign for ticket ${ticket.number}.`,
+							),
+							related: ticket.number,
+						})
+					}
 				>
-					<Button size="sm" variant="secondary">
-						<Megaphone className="size-3.5" />
-						{t("Zamów kampanię", "Order a campaign")}
-					</Button>
-				</Link>
+					<Megaphone className="size-3.5" />
+					{t("Zamów kampanię", "Order a campaign")}
+				</Button>
 			</Card.Header>
 			<Card.Content>
 				{linked.isPending ? (

@@ -567,10 +567,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@fontsource/cormorant-garamond@npm:^5.3.0":
+"@fontsource-variable/jetbrains-mono@npm:^5.3.0":
   version: 5.3.0
-  resolution: "@fontsource/cormorant-garamond@npm:5.3.0"
-  checksum: 10c0/74f1fd9aa5c62d77e60df14b52c3f1737949f2fec8a2cb383c304f4409664b4c95e5cc5065a78269849959a4ae7d7922d997336f2159b4008c285e61a40b1284
+  resolution: "@fontsource-variable/jetbrains-mono@npm:5.3.0"
+  checksum: 10c0/ba983321b530a56696b12390a377c79a962376a33359eeda37c9a2141450802e0b630e6c232d90aab0281179e623d01c77d1bc8059ce595fe865fbc6d6022ffb
   languageName: node
   linkType: hard
 
@@ -2085,7 +2085,7 @@ __metadata:
   dependencies:
     "@biomejs/biome": "npm:2.6.6"
     "@fontsource-variable/inter": "npm:^5.3.0"
-    "@fontsource/cormorant-garamond": "npm:^5.3.0"
+    "@fontsource-variable/jetbrains-mono": "npm:^5.3.0"
     "@heroui/react": "npm:^3.2.7"
     "@heroui/styles": "npm:^3.2.7"
     "@internationalized/date": "npm:^3.12.4"

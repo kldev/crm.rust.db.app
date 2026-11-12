@@ -2,7 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { forwardRef, useImperativeHandle, useState } from "react";
 import { z } from "zod";
 import { changeOwnPassword } from "#/api/endpoints/auth/auth";
-import { ApiError, FormDrawer } from "#/components/ui";
+import { ApiError, FormDialog } from "#/components/ui";
 import { useAppForm } from "#/forms";
 
 export interface ChangePasswordCommand {
@@ -17,7 +17,7 @@ const schema = z
 	})
 	.refine((v) => v.newPassword === v.repeat, { message: "Passwords differ", path: ["repeat"] });
 
-export const ChangePasswordDrawer = forwardRef<ChangePasswordCommand, { onSuccess: () => void }>(
+export const ChangePasswordDialog = forwardRef<ChangePasswordCommand, { onSuccess: () => void }>(
 	({ onSuccess }, ref) => {
 		const [open, setOpen] = useState(false);
 		useImperativeHandle(ref, () => ({ open: () => setOpen(true) }), []);
@@ -33,7 +33,7 @@ export const ChangePasswordDrawer = forwardRef<ChangePasswordCommand, { onSucces
 		);
 	},
 );
-ChangePasswordDrawer.displayName = "ChangePasswordDrawer";
+ChangePasswordDialog.displayName = "ChangePasswordDialog";
 
 function FormContent({ onClose, onSuccess }: { onClose: () => void; onSuccess: () => void }) {
 	const mutation = useMutation({
@@ -48,8 +48,13 @@ function FormContent({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
 	});
 
 	return (
-		<FormDrawer title="Change password" onClose={onClose} onSubmit={() => void form.handleSubmit()}>
-			<FormDrawer.Body>
+		<FormDialog
+			title="Change password"
+			size="compact"
+			onClose={onClose}
+			onSubmit={() => void form.handleSubmit()}
+		>
+			<FormDialog.Body columns={1}>
 				<form.AppField name="currentPassword">
 					{(f) => (
 						<f.FormInput
@@ -76,8 +81,8 @@ function FormContent({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
 					)}
 				</form.AppField>
 				<ApiError error={mutation.error} />
-			</FormDrawer.Body>
-			<FormDrawer.Footer submitLabel="Change password" isPending={mutation.isPending} />
-		</FormDrawer>
+			</FormDialog.Body>
+			<FormDialog.Footer submitLabel="Change password" isPending={mutation.isPending} />
+		</FormDialog>
 	);
 }

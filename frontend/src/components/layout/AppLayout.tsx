@@ -24,10 +24,11 @@ import { http } from "#/api/mutator";
 import { UserAvatar } from "#/components/ui";
 import {
 	type ChangePasswordCommand,
-	ChangePasswordDrawer,
-} from "#/features/auth/ChangePasswordDrawer";
+	ChangePasswordDialog,
+} from "#/features/auth/ChangePasswordDialog";
 import { can, type Role, useForgetSession, useMe } from "#/features/auth/session";
 import { DeskCounters } from "#/features/desk/components/DeskCounters";
+import { NewTicketProvider, useNewTicket } from "#/features/desk/NewTicketDialog";
 import { roleLabel } from "#/features/types";
 import { type I18n, useI18n } from "#/i18n";
 import { LanguageSwitch } from "#/i18n/LanguageSwitch";
@@ -42,12 +43,13 @@ interface NavItem {
 		| "/desk/pool"
 		| "/desk/mine"
 		| "/desk/all"
-		| "/desk/new"
 		| "/desk/agents"
 		| "/desk/people"
 		| "/desk/reports"
 		| "/desk/charts";
 	label: (t: I18n["t"]) => string;
+	/** Opens a dialog instead of a page. */
+	dialog?: "new-ticket";
 	icon: typeof LayoutDashboard;
 	visible?: (role: Role) => boolean;
 }
@@ -74,7 +76,12 @@ const NAV: { section: (t: I18n["t"]) => string; items: NavItem[] }[] = [
 			{ to: "/desk/pool", label: (t) => t("Pula", "Pool"), icon: Inbox },
 			{ to: "/desk/mine", label: (t) => t("Moje zgłoszenia", "My tickets"), icon: ListTodo },
 			{ to: "/desk/all", label: (t) => t("Wszystkie", "All tickets"), icon: Tickets },
-			{ to: "/desk/new", label: (t) => t("Nowe zgłoszenie", "New ticket"), icon: SquarePlus },
+			{
+				to: "/desk/all",
+				dialog: "new-ticket",
+				label: (t) => t("Nowe zgłoszenie", "New ticket"),
+				icon: SquarePlus,
+			},
 			{ to: "/desk/agents", label: (t) => t("Agenci", "Agents"), icon: Headset },
 			{ to: "/desk/people", label: (t) => t("Osoby", "People"), icon: Contact },
 			{ to: "/desk/reports", label: (t) => t("Raporty", "Reports"), icon: FileSpreadsheet },
@@ -88,7 +95,7 @@ function Brand() {
 		<div className="flex items-center gap-3 px-5 pt-6 pb-8">
 			<img src="/favicon.svg" alt="" className="size-8" />
 			<div className="leading-tight">
-				<p className="font-display text-2xl font-semibold text-white">R CRM</p>
+				<p className="font-display text-xl font-semibold text-white">R CRM</p>
 				<p className="font-mono text-[10px] tracking-[0.14em] text-sidebar-muted uppercase">Rust</p>
 			</div>
 		</div>
@@ -121,23 +128,39 @@ function NavLinks({
 	onNavigate?: () => void;
 }) {
 	const { t } = useI18n();
+	const newTicket = useNewTicket();
 	return (
 		<>
 			{items
 				.filter((item) => !item.visible || item.visible(role))
-				.map((item) => (
-					<Link
-						key={item.to}
-						to={item.to}
-						onClick={onNavigate}
-						activeOptions={{ exact: item.to === "/" }}
-						className="group relative flex items-center gap-3 rounded-md px-3 py-2 text-sm text-sidebar-text transition-colors hover:bg-sidebar-hover data-[status=active]:bg-sidebar-active data-[status=active]:text-champagne"
-					>
-						<span className="absolute inset-y-1 left-0 w-0.5 rounded-full bg-champagne opacity-0 transition-opacity group-data-[status=active]:opacity-100" />
-						<item.icon className="size-4" strokeWidth={1.75} />
-						{item.label(t)}
-					</Link>
-				))}
+				.map((item) =>
+					item.dialog ? (
+						<button
+							key={item.label(t)}
+							type="button"
+							onClick={() => {
+								onNavigate?.();
+								newTicket();
+							}}
+							className="flex items-center gap-3 rounded px-3 py-1.5 text-left text-sm text-sidebar-text transition-colors hover:bg-sidebar-hover"
+						>
+							<item.icon className="size-4" strokeWidth={1.75} />
+							{item.label(t)}
+						</button>
+					) : (
+						<Link
+							key={item.to}
+							to={item.to}
+							onClick={onNavigate}
+							activeOptions={{ exact: item.to === "/" }}
+							className="group relative flex items-center gap-3 rounded px-3 py-1.5 text-sm text-sidebar-text transition-colors hover:bg-sidebar-hover data-[status=active]:bg-sidebar-active data-[status=active]:text-signal"
+						>
+							<span className="absolute inset-y-1 left-0 w-0.5 rounded-full bg-signal opacity-0 transition-opacity group-data-[status=active]:opacity-100" />
+							<item.icon className="size-4" strokeWidth={1.75} />
+							{item.label(t)}
+						</Link>
+					),
+				)}
 		</>
 	);
 }
@@ -200,69 +223,73 @@ function UserMenu({ onChangePassword }: { onChangePassword: () => void }) {
 
 export function AppLayout() {
 	const { t } = useI18n();
-	// Wide pages (reports with many columns, charts) use the whole screen; the rest keep a readable width.
-	const wide = useMatches({ select: (matches) => matches.some((m) => m.staticData?.wide) });
+	// Tables grow with the screen up to 1920px (most of a 2560x1440 display), wide pages (reports with many columns,
+	// charts) up to 2400px. Nothing stretches across an ultrawide monitor.
+	const width = useMatches({
+		select: (matches) =>
+			matches.some((m) => m.staticData?.wide) ? "max-w-[2400px]" : "max-w-[1920px]",
+	});
 	const me = useMe();
 	const [mobileNav, setMobileNav] = useState(false);
-	const passwordDrawer = useRef<ChangePasswordCommand>(null);
+	const passwordDialog = useRef<ChangePasswordCommand>(null);
 
 	return (
-		<div className="min-h-screen bg-background lg:grid lg:grid-cols-[248px_minmax(0,1fr)]">
-			<aside className="sticky top-0 hidden h-screen flex-col border-r border-sidebar-border bg-sidebar lg:flex">
-				<Brand />
-				<Navigation role={me.role} />
-				<p className="mt-auto px-6 pb-6 text-[11px] leading-relaxed text-sidebar-muted">
-					{t(
-						"Każdy odczyt i zapis to procedura lub funkcja PostgreSQL.",
-						"Every read and write is a PostgreSQL procedure or function.",
-					)}
-				</p>
-			</aside>
+		<NewTicketProvider>
+			<div className="min-h-screen bg-background lg:grid lg:grid-cols-[248px_minmax(0,1fr)]">
+				<aside className="sticky top-0 hidden h-screen flex-col border-r border-sidebar-border bg-sidebar lg:flex">
+					<Brand />
+					<Navigation role={me.role} />
+					<p className="mt-auto px-6 pb-6 text-[11px] leading-relaxed text-sidebar-muted">
+						{t(
+							"Każdy odczyt i zapis to procedura lub funkcja PostgreSQL.",
+							"Every read and write is a PostgreSQL procedure or function.",
+						)}
+					</p>
+				</aside>
 
-			<Drawer>
-				<Drawer.Backdrop isOpen={mobileNav} onOpenChange={setMobileNav}>
-					<Drawer.Content placement="left" className="max-w-[270px]">
-						<Drawer.Dialog className="bg-sidebar">
-							<Brand />
-							<Navigation role={me.role} onNavigate={() => setMobileNav(false)} />
-						</Drawer.Dialog>
-					</Drawer.Content>
-				</Drawer.Backdrop>
-			</Drawer>
+				<Drawer>
+					<Drawer.Backdrop isOpen={mobileNav} onOpenChange={setMobileNav}>
+						<Drawer.Content placement="left" className="max-w-[270px]">
+							<Drawer.Dialog className="bg-sidebar">
+								<Brand />
+								<Navigation role={me.role} onNavigate={() => setMobileNav(false)} />
+							</Drawer.Dialog>
+						</Drawer.Content>
+					</Drawer.Backdrop>
+				</Drawer>
 
-			<div className="flex min-w-0 flex-col">
-				<header className="sticky top-0 z-20 flex h-16 items-center gap-3 border-b border-separator bg-topbar/95 px-4 backdrop-blur sm:px-8">
-					<Button
-						isIconOnly
-						variant="ghost"
-						className="lg:hidden"
-						aria-label={t("Otwórz nawigację", "Open navigation")}
-						onPress={() => setMobileNav(true)}
-					>
-						<Menu className="size-5" />
-					</Button>
-					<DeskCounters />
-					<div className="ml-auto flex items-center gap-3">
-						<LanguageSwitch />
-						<UserMenu onChangePassword={() => passwordDrawer.current?.open()} />
-					</div>
-				</header>
-				<main
-					className={`mx-auto w-full flex-1 px-4 py-8 sm:px-8 ${wide ? "max-w-none" : "max-w-7xl"}`}
-				>
-					<Outlet />
-				</main>
+				<div className="flex min-w-0 flex-col">
+					<header className="sticky top-0 z-20 flex h-14 items-center gap-3 border-b border-border bg-topbar/95 px-4 backdrop-blur sm:px-8 2xl:px-10">
+						<Button
+							isIconOnly
+							variant="ghost"
+							className="lg:hidden"
+							aria-label={t("Otwórz nawigację", "Open navigation")}
+							onPress={() => setMobileNav(true)}
+						>
+							<Menu className="size-5" />
+						</Button>
+						<DeskCounters />
+						<div className="ml-auto flex items-center gap-3">
+							<LanguageSwitch />
+							<UserMenu onChangePassword={() => passwordDialog.current?.open()} />
+						</div>
+					</header>
+					<main className={`mx-auto w-full flex-1 px-4 py-6 sm:px-8 2xl:px-10 ${width}`}>
+						<Outlet />
+					</main>
+				</div>
+
+				<ChangePasswordDialog
+					ref={passwordDialog}
+					onSuccess={() => toast.success(t("Hasło zmienione", "Password changed"))}
+				/>
 			</div>
-
-			<ChangePasswordDrawer
-				ref={passwordDrawer}
-				onSuccess={() => toast.success(t("Hasło zmienione", "Password changed"))}
-			/>
-		</div>
+		</NewTicketProvider>
 	);
 }
 
-/** Page title in the Obsidian serif, optional eyebrow, description and actions. */
+/** Page title (bold Inter), optional eyebrow, description and actions. */
 export function PageHeader({
 	eyebrow,
 	title,
@@ -277,16 +304,14 @@ export function PageHeader({
 	meta?: ReactNode;
 }) {
 	return (
-		<div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+		<div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
 			<div className="min-w-0">
 				{eyebrow ? (
-					<div className="mb-2 font-mono text-[11px] tracking-[0.12em] text-muted uppercase">
+					<div className="mb-1.5 font-mono text-[11px] font-medium tracking-[0.12em] text-accent uppercase">
 						{eyebrow}
 					</div>
 				) : null}
-				<h1 className="font-display text-4xl leading-tight font-semibold text-foreground">
-					{title}
-				</h1>
+				<h1 className="font-display text-3xl leading-tight font-bold text-foreground">{title}</h1>
 				{description ? <p className="mt-2 max-w-2xl text-sm text-muted">{description}</p> : null}
 				{meta ? <div className="mt-3 flex flex-wrap items-center gap-2">{meta}</div> : null}
 			</div>

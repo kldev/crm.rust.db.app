@@ -1,139 +1,183 @@
 @import "tailwindcss";
 @import "@heroui/styles";
 @import "@fontsource-variable/inter";
-@import "@fontsource/cormorant-garamond/500.css";
-@import "@fontsource/cormorant-garamond/600.css";
+@import "@fontsource-variable/jetbrains-mono";
 
 /*
- * Ambit Obsidian: obsidian and linen, a champagne accent, serif titles (Cormorant Garamond) over Inter.
- * The palette is the Obsidian theme of ambit.es (frontend/src/styles/themes.css). Its values live under
- * --obs-* so they never collide with the --color-* names Tailwind and HeroUI define; HeroUI's own variables
- * (--accent, --surface, ...) are fed from them below. Unlayered on purpose: HeroUI declares its theme in
+ * Ambit Circuit: the look of an IT / B2B distributor portal. Cool grey workspace, white panels, a navy rail,
+ * one electric-blue action colour and a cyan signal used only on dark surfaces. Inter everywhere (headings bold
+ * and tight), JetBrains Mono for codes, ids, amounts and table heads. Square-ish corners and dense tables, so a
+ * wide screen shows more rows and columns instead of more whitespace.
+ * Values live under --th-* so they never collide with the --color-* names Tailwind and HeroUI define; HeroUI's own
+ * variables (--accent, --surface, ...) are fed from them below. Unlayered on purpose: HeroUI declares its theme in
  * @layer base, and an unlayered rule wins.
  */
 :root {
-	--obs-bg: #e9e4da;
-	--obs-surface: #ffffff;
-	--obs-surface-subtle: #f6f3ee;
-	--obs-surface-hover: #f1ede6;
-	--obs-surface-selected: #f3ebdc;
-	--obs-topbar: #e1dbcf;
+	--th-bg: #eef1f5;
+	--th-surface: #ffffff;
+	--th-surface-subtle: #f6f8fa;
+	--th-surface-hover: #eef2f7;
+	--th-surface-selected: #e6effe;
+	--th-topbar: #ffffff;
 
-	--obs-text: #171a21;
-	--obs-text-secondary: #343a46;
-	--obs-text-muted: #585b61;
+	--th-text: #0f172a;
+	--th-text-secondary: #334155;
+	--th-text-muted: #5b6678;
 
-	--obs-border: #ddd9d1;
-	--obs-border-subtle: #e8e4dc;
-	--obs-border-strong: #c7c1b6;
+	--th-border: #d9dfe7;
+	--th-border-subtle: #e6eaf0;
+	--th-border-strong: #c2cbd6;
 
-	--obs-ink: #171a21;
-	--obs-ink-hover: #343a46;
-	--obs-champagne: #c4a574;
-	--obs-champagne-soft: #f3ebdc;
+	--th-ink: #0b1324;
+	--th-primary: #1f5fd6;
+	--th-primary-hover: #184fb3;
+	--th-primary-soft: #e6effe;
+	--th-signal: #38c6e0;
 
-	--obs-success: #506655;
-	--obs-success-soft: #e7ece8;
-	--obs-warning: #7d6127;
-	--obs-warning-soft: #f5eddd;
-	--obs-danger: #8c433e;
-	--obs-danger-soft: #f4e7e6;
-	--obs-info: #4a5d6e;
-	--obs-info-soft: #e7ecf0;
+	--th-success: #15803d;
+	--th-success-soft: #e5f5eb;
+	--th-warning: #a65d07;
+	--th-warning-soft: #fdf2e1;
+	--th-danger: #c0262d;
+	--th-danger-soft: #fdecec;
+	--th-info: #0e6f8a;
+	--th-info-soft: #e2f3f8;
 
-	--obs-field: #faf8f4;
+	--th-field: #ffffff;
 
-	--obs-sidebar: #171a21;
-	--obs-sidebar-border: #343a46;
-	--obs-sidebar-text: #d9d4ca;
-	--obs-sidebar-text-muted: #8d9097;
-	--obs-sidebar-hover: #262b34;
-	--obs-sidebar-active: #2a2f39;
+	--th-sidebar: #0b1324;
+	--th-sidebar-border: #1c2740;
+	--th-sidebar-text: #c9d3e1;
+	--th-sidebar-text-muted: #7d8aa0;
+	--th-sidebar-hover: #16213a;
+	--th-sidebar-active: #1a2b4c;
 
 	/* HeroUI */
-	--background: var(--obs-bg);
-	--foreground: var(--obs-text);
-	--surface: var(--obs-surface);
-	--surface-foreground: var(--obs-text);
-	--surface-secondary: var(--obs-surface-subtle);
-	--surface-secondary-foreground: var(--obs-text);
-	--surface-tertiary: var(--obs-surface-selected);
-	--surface-tertiary-foreground: var(--obs-text);
-	--overlay: var(--obs-surface);
-	--overlay-foreground: var(--obs-text);
-	--muted: var(--obs-text-muted);
-	--default: var(--obs-surface-hover);
-	--default-foreground: var(--obs-text);
-	--default-hover: var(--obs-surface-selected);
-	--accent: var(--obs-ink);
+	--background: var(--th-bg);
+	--foreground: var(--th-text);
+	--surface: var(--th-surface);
+	--surface-foreground: var(--th-text);
+	--surface-secondary: var(--th-surface-subtle);
+	--surface-secondary-foreground: var(--th-text);
+	--surface-tertiary: var(--th-surface-selected);
+	--surface-tertiary-foreground: var(--th-text);
+	--overlay: var(--th-surface);
+	--overlay-foreground: var(--th-text);
+	--muted: var(--th-text-muted);
+	--default: var(--th-surface-hover);
+	--default-foreground: var(--th-text);
+	--default-hover: var(--th-border-subtle);
+	--accent: var(--th-primary);
 	--accent-foreground: #ffffff;
-	--accent-hover: var(--obs-ink-hover);
-	--accent-soft: var(--obs-champagne-soft);
-	--accent-soft-foreground: var(--obs-ink);
-	--success: var(--obs-success);
+	--accent-hover: var(--th-primary-hover);
+	--accent-soft: var(--th-primary-soft);
+	--accent-soft-foreground: var(--th-primary-hover);
+	--success: var(--th-success);
 	--success-foreground: #ffffff;
-	--success-soft: var(--obs-success-soft);
-	--success-soft-foreground: var(--obs-success);
-	--warning: var(--obs-warning);
+	--success-soft: var(--th-success-soft);
+	--success-soft-foreground: var(--th-success);
+	--warning: var(--th-warning);
 	--warning-foreground: #ffffff;
-	--warning-soft: var(--obs-warning-soft);
-	--warning-soft-foreground: var(--obs-warning);
-	--danger: var(--obs-danger);
+	--warning-soft: var(--th-warning-soft);
+	--warning-soft-foreground: var(--th-warning);
+	--danger: var(--th-danger);
 	--danger-foreground: #ffffff;
-	--danger-soft: var(--obs-danger-soft);
-	--danger-soft-foreground: var(--obs-danger);
-	--field-background: var(--obs-field);
-	--field-foreground: var(--obs-text);
-	--field-placeholder: var(--obs-text-muted);
-	--field-border: var(--obs-border);
+	--danger-soft: var(--th-danger-soft);
+	--danger-soft-foreground: var(--th-danger);
+	--field-background: var(--th-field);
+	--field-foreground: var(--th-text);
+	--field-placeholder: var(--th-text-muted);
+	--field-border: var(--th-border-strong);
 	--field-border-width: 1px;
 	--field-shadow: none;
-	--border: var(--obs-border);
-	--separator: var(--obs-border-subtle);
-	--focus: var(--obs-champagne);
-	--link: var(--obs-ink);
-	--radius: 8px;
-	--field-radius: 6px;
-	--surface-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
-	--overlay-shadow: -4px 0 16px rgba(16, 24, 40, 0.12);
+	--border: var(--th-border);
+	--separator: var(--th-border-subtle);
+	--focus: var(--th-primary);
+	--link: var(--th-primary);
+	--radius: 6px;
+	--field-radius: 4px;
+	--surface-shadow: 0 0 0 1px var(--th-border), 0 1px 2px rgba(15, 23, 42, 0.04);
+	--overlay-shadow: -4px 0 20px rgba(15, 23, 42, 0.14);
 }
 
 @theme {
 	--font-sans:
 		"Inter Variable", Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-	--font-display: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+	--font-display:
+		"Inter Variable", Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
 	--font-mono:
-		ui-monospace, "SF Mono", "JetBrains Mono", "Cascadia Mono", Menlo, Consolas, monospace;
+		"JetBrains Mono Variable", "JetBrains Mono", ui-monospace, "SF Mono", "Cascadia Mono", Menlo,
+		Consolas, monospace;
 
-	/* Obsidian-only colours used by the shell (sidebar, top bar, champagne details). */
-	--color-ink: var(--obs-ink);
-	--color-champagne: var(--obs-champagne);
-	--color-linen: var(--obs-bg);
-	--color-topbar: var(--obs-topbar);
-	--color-info: var(--obs-info);
-	--color-info-soft: var(--obs-info-soft);
-	--color-sidebar: var(--obs-sidebar);
-	--color-sidebar-border: var(--obs-sidebar-border);
-	--color-sidebar-text: var(--obs-sidebar-text);
-	--color-sidebar-muted: var(--obs-sidebar-text-muted);
-	--color-sidebar-hover: var(--obs-sidebar-hover);
-	--color-sidebar-active: var(--obs-sidebar-active);
+	/* Shell colours (navy rail, white top bar, cyan signal on dark). */
+	--color-ink: var(--th-ink);
+	--color-signal: var(--th-signal);
+	--color-topbar: var(--th-topbar);
+	--color-info: var(--th-info);
+	--color-info-soft: var(--th-info-soft);
+	--color-sidebar: var(--th-sidebar);
+	--color-sidebar-border: var(--th-sidebar-border);
+	--color-sidebar-text: var(--th-sidebar-text);
+	--color-sidebar-muted: var(--th-sidebar-text-muted);
+	--color-sidebar-hover: var(--th-sidebar-hover);
+	--color-sidebar-active: var(--th-sidebar-active);
 }
 
 html,
 body {
-	background: var(--obs-bg);
-	color: var(--obs-text);
+	background: var(--th-bg);
+	color: var(--th-text);
 	font-family: var(--font-sans);
+	font-feature-settings: "cv11", "ss01";
 	-webkit-font-smoothing: antialiased;
 }
 
-/* The directory look of Obsidian: table heads in a mono face, uppercase and tracked. */
+/* Headings: Inter, heavy and tight, like a product catalogue. */
+.font-display {
+	letter-spacing: -0.02em;
+}
+
+/*
+ * Data tables: square, dense, mono heads, zebra rows, a sticky head. Wide screens get more rows on screen; the
+ * blue left edge marks the hovered row.
+ */
 .table__column {
 	font-family: var(--font-mono);
 	font-size: 11px;
-	letter-spacing: 0.06em;
+	font-weight: 600;
+	letter-spacing: 0.04em;
 	text-transform: uppercase;
+	color: var(--th-text-secondary);
+	padding: 0.5rem 0.75rem;
+	background: var(--th-surface-subtle);
+	border-bottom: 1px solid var(--th-border);
+}
+
+.table__cell {
+	padding: 0.5rem 0.75rem;
+	border-bottom-color: var(--th-border-subtle);
+}
+
+.table__body .table__row:nth-child(even) .table__cell {
+	background: #fafbfc;
+}
+
+@media (hover: hover) {
+	.table__body .table__row:hover .table__cell,
+	.table__body .table__row[data-hovered="true"] .table__cell {
+		background: var(--th-surface-selected);
+	}
+	.table__body .table__row:hover .table__cell:first-child,
+	.table__body .table__row[data-hovered="true"] .table__cell:first-child {
+		box-shadow: inset 2px 0 0 var(--th-primary);
+	}
+}
+
+.table__body tr:first-child td:first-child,
+.table__body tr:first-child td:last-child,
+.table__body tr:last-child td:first-child,
+.table__body tr:last-child td:last-child {
+	border-radius: 0;
 }
 
 /* Rows that open a details page. */
@@ -146,6 +190,16 @@ body {
 .figures {
 	font-family: var(--font-mono);
 	font-variant-numeric: tabular-nums;
+}
+
+/* Wide screens (1440p and up): a touch more room per row so dense tables stay readable at a distance. */
+@media (min-width: 1920px) {
+	.table__cell {
+		padding: 0.5625rem 1rem;
+	}
+	.table__column {
+		padding: 0.5625rem 1rem;
+	}
 }
 
 /*

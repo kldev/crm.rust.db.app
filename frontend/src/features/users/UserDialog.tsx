@@ -2,12 +2,12 @@ import { toast } from "@heroui/react";
 import { forwardRef, useImperativeHandle, useState } from "react";
 import { z } from "zod";
 import type { UserResponse } from "#/api/models";
-import { ApiError, FormDrawer } from "#/components/ui";
+import { ApiError, FormDialog } from "#/components/ui";
 import { ROLES, roleLabel } from "#/features/types";
 import { useAppForm } from "#/forms";
 import { useChangeUserRole, useCreateUser, useResetUserPassword } from "./hooks";
 
-export interface UserDrawerCommand {
+export interface UserDialogCommand {
 	create: () => void;
 	edit: (user: UserResponse) => void;
 	resetPassword: (user: UserResponse) => void;
@@ -20,7 +20,7 @@ type Target =
 
 const roleOptions = ROLES.map((r) => ({ id: r, label: roleLabel[r] }));
 
-export const UserDrawer = forwardRef<UserDrawerCommand>((_props, ref) => {
+export const UserDialog = forwardRef<UserDialogCommand>((_props, ref) => {
 	const [target, setTarget] = useState<Target | null>(null);
 	useImperativeHandle(
 		ref,
@@ -37,7 +37,7 @@ export const UserDrawer = forwardRef<UserDrawerCommand>((_props, ref) => {
 	if (target.mode === "role") return <ChangeRole user={target.user} onClose={close} />;
 	return <ResetPassword user={target.user} onClose={close} />;
 });
-UserDrawer.displayName = "UserDrawer";
+UserDialog.displayName = "UserDialog";
 
 const createSchema = z.object({
 	login: z
@@ -68,8 +68,8 @@ function CreateUser({ onClose }: { onClose: () => void }) {
 		onSubmit: ({ value }) => mutation.mutate(value),
 	});
 	return (
-		<FormDrawer title="New user" onClose={onClose} onSubmit={() => void form.handleSubmit()}>
-			<FormDrawer.Body>
+		<FormDialog title="New user" onClose={onClose} onSubmit={() => void form.handleSubmit()}>
+			<FormDialog.Body>
 				<form.AppField name="login">
 					{(f) => <f.FormInput label="Login" placeholder="anna.nowak" autoFocus />}
 				</form.AppField>
@@ -89,10 +89,12 @@ function CreateUser({ onClose }: { onClose: () => void }) {
 						/>
 					)}
 				</form.AppField>
-				<ApiError error={mutation.error} />
-			</FormDrawer.Body>
-			<FormDrawer.Footer submitLabel="Create user" isPending={mutation.isPending} />
-		</FormDrawer>
+				<FormDialog.Full>
+					<ApiError error={mutation.error} />
+				</FormDialog.Full>
+			</FormDialog.Body>
+			<FormDialog.Footer submitLabel="Create user" isPending={mutation.isPending} />
+		</FormDialog>
 	);
 }
 
@@ -107,20 +109,21 @@ function ChangeRole({ user, onClose }: { user: UserResponse; onClose: () => void
 		onSubmit: ({ value }) => mutation.mutate({ id: user.id, role: value.role }),
 	});
 	return (
-		<FormDrawer
+		<FormDialog
 			title="Change role"
+			size="compact"
 			description={`${user.displayName} · ${user.login}`}
 			onClose={onClose}
 			onSubmit={() => void form.handleSubmit()}
 		>
-			<FormDrawer.Body>
+			<FormDialog.Body columns={1}>
 				<form.AppField name="role">
 					{(f) => <f.FormSelect label="Role" options={roleOptions} />}
 				</form.AppField>
 				<ApiError error={mutation.error} />
-			</FormDrawer.Body>
-			<FormDrawer.Footer isPending={mutation.isPending} />
-		</FormDrawer>
+			</FormDialog.Body>
+			<FormDialog.Footer isPending={mutation.isPending} />
+		</FormDialog>
 	);
 }
 
@@ -135,13 +138,14 @@ function ResetPassword({ user, onClose }: { user: UserResponse; onClose: () => v
 		onSubmit: ({ value }) => mutation.mutate({ id: user.id, password: value.password }),
 	});
 	return (
-		<FormDrawer
+		<FormDialog
 			title="Set password"
+			size="compact"
 			description={`${user.displayName} · ${user.login}`}
 			onClose={onClose}
 			onSubmit={() => void form.handleSubmit()}
 		>
-			<FormDrawer.Body>
+			<FormDialog.Body columns={1}>
 				<form.AppField name="password">
 					{(f) => (
 						<f.FormInput
@@ -153,8 +157,8 @@ function ResetPassword({ user, onClose }: { user: UserResponse; onClose: () => v
 					)}
 				</form.AppField>
 				<ApiError error={mutation.error} />
-			</FormDrawer.Body>
-			<FormDrawer.Footer submitLabel="Set password" isPending={mutation.isPending} />
-		</FormDrawer>
+			</FormDialog.Body>
+			<FormDialog.Footer submitLabel="Set password" isPending={mutation.isPending} />
+		</FormDialog>
 	);
 }

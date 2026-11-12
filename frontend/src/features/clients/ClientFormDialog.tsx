@@ -1,7 +1,7 @@
 import { forwardRef, useImperativeHandle, useState } from "react";
 import { z } from "zod";
 import type { ClientResponse } from "#/api/models";
-import { ApiError, FormDrawer } from "#/components/ui";
+import { ApiError, FormDialog } from "#/components/ui";
 import { can, useMe } from "#/features/auth/session";
 import { CITIES, CLIENT_STATUSES, clientStatusLabel } from "#/features/types";
 import { useSalesUsers } from "#/features/users/hooks";
@@ -35,7 +35,7 @@ const orNull = (v: string) => (v.trim() === "" ? null : v.trim());
 
 type Target = { mode: "create" } | { mode: "edit"; client: ClientResponse };
 
-export const ClientFormDrawer = forwardRef<
+export const ClientFormDialog = forwardRef<
 	ClientFormCommand,
 	{ onSaved: (client: ClientResponse, created: boolean) => void }
 >(({ onSaved }, ref) => {
@@ -60,7 +60,7 @@ export const ClientFormDrawer = forwardRef<
 		/>
 	);
 });
-ClientFormDrawer.displayName = "ClientFormDrawer";
+ClientFormDialog.displayName = "ClientFormDialog";
 
 function FormContent({
 	target,
@@ -108,44 +108,40 @@ function FormContent({
 	});
 
 	return (
-		<FormDrawer
+		<FormDialog
 			title={editing ? "Edit client" : "New client"}
 			description={editing ? editing.name : "A lead, an active client or one to archive."}
 			onClose={onClose}
 			onSubmit={() => void form.handleSubmit()}
 		>
-			<FormDrawer.Body>
-				<form.AppField name="name">
-					{(f) => (
-						<f.FormInput label="Company name" placeholder="Zielony Most Sp. z o.o." autoFocus />
-					)}
-				</form.AppField>
-				<div className="grid grid-cols-2 gap-4">
-					<form.AppField name="nip">
-						{(f) => <f.FormInput label="NIP" placeholder="1234567890" inputMode="numeric" />}
-					</form.AppField>
-					<form.AppField name="status">
+			<FormDialog.Body>
+				<FormDialog.Full>
+					<form.AppField name="name">
 						{(f) => (
-							<f.FormSelect
-								label="Status"
-								options={CLIENT_STATUSES.map((s) => ({ id: s, label: clientStatusLabel[s] }))}
-							/>
+							<f.FormInput label="Company name" placeholder="Zielony Most Sp. z o.o." autoFocus />
 						)}
 					</form.AppField>
-				</div>
+				</FormDialog.Full>
+				<form.AppField name="nip">
+					{(f) => <f.FormInput label="NIP" placeholder="1234567890" inputMode="numeric" />}
+				</form.AppField>
+				<form.AppField name="status">
+					{(f) => (
+						<f.FormSelect
+							label="Status"
+							options={CLIENT_STATUSES.map((s) => ({ id: s, label: clientStatusLabel[s] }))}
+						/>
+					)}
+				</form.AppField>
 				<form.AppField name="email">
 					{(f) => <f.FormInput label="E-mail" type="email" placeholder="office@example.com" />}
 				</form.AppField>
-				<div className="grid grid-cols-2 gap-4">
-					<form.AppField name="phone">
-						{(f) => <f.FormInput label="Phone" type="tel" placeholder="+48 500 000 000" />}
-					</form.AppField>
-					<form.AppField name="city">
-						{(f) => (
-							<f.FormSelect label="City" options={CITIES.map((c) => ({ id: c, label: c }))} />
-						)}
-					</form.AppField>
-				</div>
+				<form.AppField name="phone">
+					{(f) => <f.FormInput label="Phone" type="tel" placeholder="+48 500 000 000" />}
+				</form.AppField>
+				<form.AppField name="city">
+					{(f) => <f.FormSelect label="City" options={CITIES.map((c) => ({ id: c, label: c }))} />}
+				</form.AppField>
 				{can.assignClients(me.role) ? (
 					<form.AppField name="assignedUserId">
 						{(f) => (
@@ -162,15 +158,21 @@ function FormContent({
 						)}
 					</form.AppField>
 				) : null}
-				<form.AppField name="note">
-					{(f) => <f.FormTextArea label="Note" placeholder="Anything worth remembering" rows={3} />}
-				</form.AppField>
-				<ApiError error={mutation.error} />
-			</FormDrawer.Body>
-			<FormDrawer.Footer
+				<FormDialog.Full>
+					<form.AppField name="note">
+						{(f) => (
+							<f.FormTextArea label="Note" placeholder="Anything worth remembering" rows={3} />
+						)}
+					</form.AppField>
+				</FormDialog.Full>
+				<FormDialog.Full>
+					<ApiError error={mutation.error} />
+				</FormDialog.Full>
+			</FormDialog.Body>
+			<FormDialog.Footer
 				submitLabel={editing ? "Save changes" : "Create client"}
 				isPending={mutation.isPending}
 			/>
-		</FormDrawer>
+		</FormDialog>
 	);
 }

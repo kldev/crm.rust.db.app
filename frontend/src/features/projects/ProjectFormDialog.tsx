@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { forwardRef, useImperativeHandle, useState } from "react";
 import { z } from "zod";
 import type { ProjectResponse } from "#/api/models";
-import { ApiError, FormDrawer } from "#/components/ui";
+import { ApiError, FormDialog } from "#/components/ui";
 import { teamsQuery, useTeamMembers } from "#/features/teams/hooks";
 import { useAppForm } from "#/forms";
 import { todayIso } from "#/lib";
@@ -36,7 +36,7 @@ type Target =
 	| { mode: "create"; client: { id: number; name: string } }
 	| { mode: "edit"; project: ProjectResponse };
 
-export const ProjectFormDrawer = forwardRef<
+export const ProjectFormDialog = forwardRef<
 	ProjectFormCommand,
 	{ onSaved: (project: ProjectResponse, created: boolean) => void }
 >(({ onSaved }, ref) => {
@@ -61,7 +61,7 @@ export const ProjectFormDrawer = forwardRef<
 		/>
 	);
 });
-ProjectFormDrawer.displayName = "ProjectFormDrawer";
+ProjectFormDialog.displayName = "ProjectFormDialog";
 
 function FormContent({
 	target,
@@ -106,7 +106,7 @@ function FormContent({
 	const members = useTeamMembers(teamId ? Number(teamId) : undefined);
 
 	return (
-		<FormDrawer
+		<FormDialog
 			title={editing ? "Edit project" : "New project"}
 			description={
 				editing ? editing.name : `For ${target.mode === "create" ? target.client.name : ""}`
@@ -114,10 +114,12 @@ function FormContent({
 			onClose={onClose}
 			onSubmit={() => void form.handleSubmit()}
 		>
-			<FormDrawer.Body>
-				<form.AppField name="name">
-					{(f) => <f.FormInput label="Project name" placeholder="CRM rollout" autoFocus />}
-				</form.AppField>
+			<FormDialog.Body>
+				<FormDialog.Full>
+					<form.AppField name="name">
+						{(f) => <f.FormInput label="Project name" placeholder="CRM rollout" autoFocus />}
+					</form.AppField>
+				</FormDialog.Full>
 				<form.AppField
 					name="teamId"
 					listeners={{ onChange: () => form.setFieldValue("ownerUserId", "") }}
@@ -154,23 +156,23 @@ function FormContent({
 						/>
 					)}
 				</form.AppField>
-				<div className="grid grid-cols-2 gap-4">
-					<form.AppField name="startDate">
-						{(f) => <f.FormInput label="Start" type="date" />}
-					</form.AppField>
-					<form.AppField name="dueDate">
-						{(f) => <f.FormInput label="Due" type="date" />}
-					</form.AppField>
-				</div>
+				<form.AppField name="startDate">
+					{(f) => <f.FormInput label="Start" type="date" />}
+				</form.AppField>
+				<form.AppField name="dueDate">
+					{(f) => <f.FormInput label="Due" type="date" />}
+				</form.AppField>
 				<form.AppField name="budget">
 					{(f) => <f.FormInput label="Budget (PLN)" placeholder="25000" inputMode="decimal" />}
 				</form.AppField>
-				<ApiError error={mutation.error} />
-			</FormDrawer.Body>
-			<FormDrawer.Footer
+				<FormDialog.Full>
+					<ApiError error={mutation.error} />
+				</FormDialog.Full>
+			</FormDialog.Body>
+			<FormDialog.Footer
 				submitLabel={editing ? "Save changes" : "Create project"}
 				isPending={mutation.isPending}
 			/>
-		</FormDrawer>
+		</FormDialog>
 	);
 }

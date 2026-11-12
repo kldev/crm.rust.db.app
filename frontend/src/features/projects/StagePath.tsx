@@ -17,7 +17,7 @@ export function StagePath({ stage }: { stage: Stage }) {
 						<span
 							className={[
 								"flex items-center gap-2 rounded-full border px-3 py-1 text-xs whitespace-nowrap",
-								done ? "border-ink bg-ink text-champagne" : "",
+								done ? "border-ink bg-ink text-signal" : "",
 								current ? "border-ink bg-accent-soft font-semibold text-foreground" : "",
 								!done && !current ? "border-border text-muted" : "",
 							].join(" ")}

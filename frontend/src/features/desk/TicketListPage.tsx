@@ -1,6 +1,5 @@
 import { Button, Card, SearchField, ToggleButton, ToggleButtonGroup } from "@heroui/react";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
 import { Inbox, Plus } from "lucide-react";
 import { useRef, useState } from "react";
 import { PageHeader } from "#/components/layout/AppLayout";
@@ -13,6 +12,7 @@ import { TicketDialogs, type TicketDialogsCommand } from "./components/TicketDia
 import { TicketsTable } from "./components/TicketsTable";
 import { WorkActions } from "./components/WorkActions";
 import { deskCatalogQuery, ticketsCountQuery, ticketsQuery } from "./hooks";
+import { useNewTicket } from "./NewTicketDialog";
 import type { TicketSearch } from "./search";
 import { DEADLINE_FILTERS, PRIORITIES, priorityLabel, type Scope } from "./types";
 
@@ -30,6 +30,7 @@ export function TicketListPage({
 	onSearch: (change: Partial<TicketSearch>) => void;
 }) {
 	const i18n = useI18n();
+	const newTicket = useNewTicket();
 	const { t, n } = i18n;
 	const now = useNow();
 	const dialogs = useRef<TicketDialogsCommand>(null);
@@ -81,12 +82,10 @@ export function TicketListPage({
 				title={header.title}
 				description={header.description}
 				actions={
-					<Link to="/desk/new">
-						<Button>
-							<Plus className="size-4" />
-							{t("Nowe zgłoszenie", "New ticket")}
-						</Button>
-					</Link>
+					<Button onPress={() => newTicket()}>
+						<Plus className="size-4" />
+						{t("Nowe zgłoszenie", "New ticket")}
+					</Button>
 				}
 			/>
 

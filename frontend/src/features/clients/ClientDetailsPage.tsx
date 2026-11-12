@@ -23,11 +23,11 @@ import {
 } from "#/components/ui";
 import { can, useMe } from "#/features/auth/session";
 import { projectsCountQuery, projectsQuery } from "#/features/projects/hooks";
-import { type ProjectFormCommand, ProjectFormDrawer } from "#/features/projects/ProjectFormDrawer";
+import { type ProjectFormCommand, ProjectFormDialog } from "#/features/projects/ProjectFormDialog";
 import { ProjectsTable } from "#/features/projects/ProjectsTable";
 import { useOnDemandTotal } from "#/hooks/useOnDemandTotal";
 import { formatDateTime } from "#/lib";
-import { type ClientFormCommand, ClientFormDrawer } from "./ClientFormDrawer";
+import { type ClientFormCommand, ClientFormDialog } from "./ClientFormDialog";
 import { ClientStatusChip } from "./ClientStatusChip";
 import { clientQuery, useDeleteClient } from "./hooks";
 
@@ -40,8 +40,8 @@ export function ClientDetailsPage() {
 	const client = useQuery(clientQuery(clientId));
 	const projects = useInfiniteQuery(projectsQuery({ clientId }, 10));
 	const projectsTotal = useOnDemandTotal(projectsCountQuery({ clientId }));
-	const clientDrawer = useRef<ClientFormCommand>(null);
-	const projectDrawer = useRef<ProjectFormCommand>(null);
+	const clientDialog = useRef<ClientFormCommand>(null);
+	const projectDialog = useRef<ProjectFormCommand>(null);
 	const [confirmDelete, setConfirmDelete] = useState(false);
 	const remove = useDeleteClient(() => {
 		toast.success("Client deleted");
@@ -79,7 +79,7 @@ export function ClientDetailsPage() {
 				}
 				actions={
 					<>
-						<Button variant="secondary" onPress={() => clientDrawer.current?.edit(c)}>
+						<Button variant="secondary" onPress={() => clientDialog.current?.edit(c)}>
 							<Pencil className="size-4" /> Edit
 						</Button>
 						{can.deleteClients(me.role) ? (
@@ -94,7 +94,7 @@ export function ClientDetailsPage() {
 			<div className="grid gap-6 lg:grid-cols-3">
 				<Card className="lg:col-span-2">
 					<Card.Header>
-						<Card.Title className="font-display text-xl">Contact</Card.Title>
+						<Card.Title className="font-display text-lg">Contact</Card.Title>
 					</Card.Header>
 					<Card.Content>
 						<div className="grid gap-4 sm:grid-cols-3">
@@ -113,7 +113,7 @@ export function ClientDetailsPage() {
 							<ContactTile icon={MapPin} label="City" value={c.city} />
 						</div>
 						{c.note ? (
-							<blockquote className="mt-6 border-l-2 border-champagne pl-4 text-sm text-foreground/80 italic">
+							<blockquote className="mt-6 border-l-2 border-accent pl-4 text-sm text-foreground/80 italic">
 								{c.note}
 							</blockquote>
 						) : null}
@@ -121,7 +121,7 @@ export function ClientDetailsPage() {
 				</Card>
 				<Card>
 					<Card.Header>
-						<Card.Title className="font-display text-xl">Account</Card.Title>
+						<Card.Title className="font-display text-lg">Account</Card.Title>
 					</Card.Header>
 					<Card.Content>
 						<InfoList
@@ -146,10 +146,10 @@ export function ClientDetailsPage() {
 
 			<Card className="mt-6 overflow-hidden p-0">
 				<div className="flex items-center justify-between border-b border-separator px-5 py-4">
-					<h2 className="font-display text-xl font-semibold">Projects</h2>
+					<h2 className="font-display text-lg font-semibold">Projects</h2>
 					<Button
 						size="sm"
-						onPress={() => projectDrawer.current?.create({ id: c.id, name: c.name })}
+						onPress={() => projectDialog.current?.create({ id: c.id, name: c.name })}
 					>
 						<Plus className="size-4" /> New project
 					</Button>
@@ -177,9 +177,9 @@ export function ClientDetailsPage() {
 				)}
 			</Card>
 
-			<ClientFormDrawer ref={clientDrawer} onSaved={() => toast.success("Client saved")} />
-			<ProjectFormDrawer
-				ref={projectDrawer}
+			<ClientFormDialog ref={clientDialog} onSaved={() => toast.success("Client saved")} />
+			<ProjectFormDialog
+				ref={projectDialog}
 				onSaved={(p) => {
 					toast.success(`Project "${p.name}" created`);
 					void navigate({ to: "/projects/$projectId", params: { projectId: p.id } });
@@ -215,7 +215,7 @@ function ContactTile({
 }) {
 	return (
 		<div className="flex items-start gap-3 rounded-lg bg-surface-secondary p-3">
-			<Icon className="mt-0.5 size-4 shrink-0 text-champagne" strokeWidth={1.75} />
+			<Icon className="mt-0.5 size-4 shrink-0 text-accent" strokeWidth={1.75} />
 			<div className="min-w-0">
 				<p className="font-mono text-[10px] tracking-[0.1em] text-muted uppercase">{label}</p>
 				{value ? (

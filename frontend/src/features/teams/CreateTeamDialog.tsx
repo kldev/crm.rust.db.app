@@ -1,7 +1,7 @@
 import { forwardRef, useImperativeHandle, useState } from "react";
 import { z } from "zod";
 import type { TeamResponse } from "#/api/models";
-import { ApiError, FormDrawer } from "#/components/ui";
+import { ApiError, FormDialog } from "#/components/ui";
 import { useManagers } from "#/features/users/hooks";
 import { useAppForm } from "#/forms";
 import { useCreateTeam } from "./hooks";
@@ -15,7 +15,7 @@ const schema = z.object({
 	leadUserId: z.string().min(1, "Choose the lead"),
 });
 
-export const CreateTeamDrawer = forwardRef<
+export const CreateTeamDialog = forwardRef<
 	CreateTeamCommand,
 	{ onCreated: (t: TeamResponse) => void }
 >(({ onCreated }, ref) => {
@@ -32,7 +32,7 @@ export const CreateTeamDrawer = forwardRef<
 		/>
 	);
 });
-CreateTeamDrawer.displayName = "CreateTeamDrawer";
+CreateTeamDialog.displayName = "CreateTeamDialog";
 
 function FormContent({
 	onClose,
@@ -50,13 +50,13 @@ function FormContent({
 			mutation.mutate({ name: value.name.trim(), leadUserId: Number(value.leadUserId) }),
 	});
 	return (
-		<FormDrawer
+		<FormDialog
 			title="New team"
 			description="Led by an active manager."
 			onClose={onClose}
 			onSubmit={() => void form.handleSubmit()}
 		>
-			<FormDrawer.Body>
+			<FormDialog.Body>
 				<form.AppField name="name">
 					{(f) => <f.FormInput label="Team name" placeholder="North" autoFocus />}
 				</form.AppField>
@@ -73,9 +73,11 @@ function FormContent({
 						/>
 					)}
 				</form.AppField>
-				<ApiError error={mutation.error} />
-			</FormDrawer.Body>
-			<FormDrawer.Footer submitLabel="Create team" isPending={mutation.isPending} />
-		</FormDrawer>
+				<FormDialog.Full>
+					<ApiError error={mutation.error} />
+				</FormDialog.Full>
+			</FormDialog.Body>
+			<FormDialog.Footer submitLabel="Create team" isPending={mutation.isPending} />
+		</FormDialog>
 	);
 }
